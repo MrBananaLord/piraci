@@ -148,22 +148,30 @@
   </div>
   <script src="js/config.js"></script>
   <script src="js/events.js"></script>
+  <script src="js/board.js"></script>
   <script>
     // Tab switching logic
     const tabBtns = document.querySelectorAll('.tab-btn');
     const wydarzeniaSection = document.getElementById('wydarzenia-section');
     const planszaSection = document.getElementById('plansza-section');
+    // Restore last selected tab from localStorage
+    const lastTab = localStorage.getItem('selectedTab') || 'wydarzenia';
+    function selectTab(tab) {
+      tabBtns.forEach(b => b.setAttribute('aria-selected', 'false'));
+      document.getElementById('tab-' + tab).setAttribute('aria-selected', 'true');
+      if (tab === 'wydarzenia') {
+        wydarzeniaSection.style.display = '';
+        planszaSection.style.display = 'none';
+      } else {
+        wydarzeniaSection.style.display = 'none';
+        planszaSection.style.display = '';
+      }
+      localStorage.setItem('selectedTab', tab);
+    }
+    selectTab(lastTab);
     tabBtns.forEach(btn => {
       btn.addEventListener('click', () => {
-        tabBtns.forEach(b => b.setAttribute('aria-selected', 'false'));
-        btn.setAttribute('aria-selected', 'true');
-        if (btn.dataset.tab === 'wydarzenia') {
-          wydarzeniaSection.style.display = '';
-          planszaSection.style.display = 'none';
-        } else {
-          wydarzeniaSection.style.display = 'none';
-          planszaSection.style.display = '';
-        }
+        selectTab(btn.dataset.tab);
       });
     });
 
