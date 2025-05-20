@@ -118,7 +118,8 @@
 <body>
   <div id="tabs">
     <button class="tab-btn" data-tab="wydarzenia" id="tab-wydarzenia" aria-selected="true">Wydarzenia</button>
-    <button class="tab-btn" data-tab="plansza" id="tab-plansza" aria-selected="false">Plansza</button>
+    <button class="tab-btn" data-tab="plansza" id="tab-plansza" aria-selected="false">Plansza 1</button>
+    <button class="tab-btn" data-tab="plansza2" id="tab-plansza2" aria-selected="false">Plansza 2</button>
   </div>
   <div id="tab-content">
     <div id="wydarzenia-section">
@@ -143,17 +144,23 @@
     </div>
     <div id="plansza-section" style="display:none;">
       <h1>Plansza</h1>
-      <div id="plansza-content">Tu będzie plansza...</div>
+      <div id="plansza1-content">Tu będzie plansza...</div>
+    </div>
+    <div id="plansza2-section" style="display:none;">
+      <h1>Plansza 2</h1>
+      <div id="plansza2-content">Tu będzie plansza 2...</div>
     </div>
   </div>
   <script src="js/config.js"></script>
   <script src="js/events.js"></script>
-  <script src="js/board.js"></script>
+  <script src="js/board1.js"></script>
+  <script src="js/board2.js"></script>
   <script>
     // Tab switching logic
     const tabBtns = document.querySelectorAll('.tab-btn');
     const wydarzeniaSection = document.getElementById('wydarzenia-section');
     const planszaSection = document.getElementById('plansza-section');
+    const plansza2Section = document.getElementById('plansza2-section');
     // Restore last selected tab from localStorage
     const lastTab = localStorage.getItem('selectedTab') || 'wydarzenia';
     function selectTab(tab) {
@@ -162,9 +169,15 @@
       if (tab === 'wydarzenia') {
         wydarzeniaSection.style.display = '';
         planszaSection.style.display = 'none';
-      } else {
+        plansza2Section.style.display = 'none';
+      } else if (tab === 'plansza') {
         wydarzeniaSection.style.display = 'none';
         planszaSection.style.display = '';
+        plansza2Section.style.display = 'none';
+      } else if (tab === 'plansza2') {
+        wydarzeniaSection.style.display = 'none';
+        planszaSection.style.display = 'none';
+        plansza2Section.style.display = '';
       }
       localStorage.setItem('selectedTab', tab);
     }

@@ -2,9 +2,9 @@
 // Generates a hex-like offset board and marks the middle tile
 
 document.addEventListener('DOMContentLoaded', function () {
-  const boardContainer = document.getElementById('plansza-content');
+  const boardContainer = document.getElementById('plansza2-content');
   const numRows = 21;
-  const squaresPerRow = [21, 20]; // even: 21, odd: 20
+  const numCols = 21;
   const squareSize = 32; // px
   const board = document.createElement('div');
   board.style.display = 'flex';
@@ -15,15 +15,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Find the middle tile coordinates
   const midRow = Math.floor(numRows / 2);
-  const midCol = 10; // for 21-squares row, 0-based
+  const midCol = Math.floor(numCols / 2);
 
   for (let row = 0; row < numRows; row++) {
-    const isEven = row % 2 === 0;
     const rowDiv = document.createElement('div');
     rowDiv.style.display = 'flex';
-    rowDiv.style.marginBottom = '0'; // removed spacing between rows
-    const numSquares = isEven ? 21 : 20;
-    for (let col = 0; col < numSquares; col++) {
+    rowDiv.style.marginBottom = '0';
+    for (let col = 0; col < numCols; col++) {
       const square = document.createElement('div');
       square.style.width = squareSize + 'px';
       square.style.height = squareSize + 'px';
@@ -33,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
       square.style.display = 'inline-block';
       square.style.position = 'relative';
       // Mark the middle tile
-      if (row === midRow && isEven && col === midCol) {
+      if (row === midRow && col === midCol) {
         square.title = 'Środek';
         // No special background or border for the center tile
         // Add pirate ship icon
@@ -100,120 +98,56 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  // Helper: get adjacent tiles for offset grid
+  // Helper: get adjacent tiles for regular grid (8 directions)
   function getAdjacent(row, col) {
-    // Even row: offset right, Odd row: offset left
-    // For even rows, the NE/SE are (row-1,col+1)/(row+1,col+1)
-    // For odd rows, the NE/SE are (row-1,col)/(row+1,col)
-    const isEven = row % 2 === 0;
     const adj = [];
-    // N
-    if (row > 0) adj.push([row - 1, col]);
-    // S
-    if (row < numRows - 1) adj.push([row + 1, col]);
-    // W
-    if (col > 0) adj.push([row, col - 1]);
-    // E
-    if ((isEven && col < 20) || (!isEven && col < 19)) adj.push([row, col + 1]);
-    // NW
-    if (row > 0) adj.push([row - 1, isEven ? col - 1 : col]);
-    // NE
-    if (row > 0) adj.push([row - 1, isEven ? col : col + 1]);
-    // SW
-    if (row < numRows - 1) adj.push([row + 1, isEven ? col - 1 : col]);
-    // SE
-    if (row < numRows - 1) adj.push([row + 1, isEven ? col : col + 1]);
-    // Filter out-of-bounds
-    return adj.filter(([r, c]) => {
-      const even = r % 2 === 0;
-      const maxCol = even ? 20 : 19;
-      return r >= 0 && r < numRows && c >= 0 && c <= maxCol;
-    });
+    const dirs = [
+      [-1, 0], // N
+      [-1, 1], // NE
+      [0, 1],  // E
+      [1, 1],  // SE
+      [1, 0],  // S
+      [1, -1], // SW
+      [0, -1], // W
+      [-1, -1] // NW
+    ];
+    for (const [dr, dc] of dirs) {
+      const nr = row + dr;
+      const nc = col + dc;
+      if (nr >= 0 && nr < numRows && nc >= 0 && nc < numCols) {
+        adj.push([nr, nc]);
+      }
+    }
+    return adj;
   }
 
-  // Map wind directions to movement vectors (N, S, W, E only)
+  // Map wind directions to movement vectors (N, NE, E, SE, S, SW, W, NW, 0)
   const windVectors = {
     '↑': [-1, 0],
+    '↗': [-1, 1],
     '→': [0, 1],
+    '↘': [1, 1],
     '↓': [1, 0],
+    '↙': [1, -1],
     '←': [0, -1],
+    '↖': [-1, -1],
     '0': [0, 0], // no wind
   };
   let selectedWind = '0';
 
-  // Helper to get direction vector between two tiles
+  // Helper to get direction between two tiles on a regular grid (8 directions)
   function getDirection(fromRow, fromCol, toRow, toCol) {
-    // For offset grid, direction is tricky. We'll use the difference and row parity.
     const dr = toRow - fromRow;
     const dc = toCol - fromCol;
-    const even = fromRow % 2 === 0;
-    // Map to one of 8 directions
     if (dr === -1 && dc === 0) return '↑';
+    if (dr === -1 && dc === 1) return '↗';
+    if (dr === 0 && dc === 1) return '→';
+    if (dr === 1 && dc === 1) return '↘';
     if (dr === 1 && dc === 0) return '↓';
-    if (dc === 1 && dr === 0) return '→';
-    if (dc === -1 && dr === 0) return '←';
-    if (dr === -1 && ((even && dc === 0) || (!even && dc === 1))) return '↗';
-    if (dr === -1 && ((even && dc === -1) || (!even && dc === 0))) return '↖';
-    if (dr === 1 && ((even && dc === 0) || (!even && dc === 1))) return '↘';
-    if (dr === 1 && ((even && dc === -1) || (!even && dc === 0))) return '↙';
+    if (dr === 1 && dc === -1) return '↙';
+    if (dr === 0 && dc === -1) return '←';
+    if (dr === -1 && dc === -1) return '↖';
     return null;
-  }
-
-  // Visualize movement range from (midRow, midCol)
-  function showMovementRange(startRow, startCol, movement, step, maxStep) {
-    // BFS to find all tiles within movement points
-    const visited = Array.from({ length: numRows }, (_, r) =>
-      Array(r % 2 === 0 ? 21 : 20).fill(false)
-    );
-    const queue = [[startRow, startCol, 0]];
-    visited[startRow][startCol] = true;
-    while (queue.length) {
-      const [r, c, dist] = queue.shift();
-      if (dist > movement) continue;
-      // Mark tile visually (skip ship tile)
-      if (!(r === startRow && c === startCol) && dist > (movement - (parseInt(moveInput.value) || 1))) {
-        const rowDiv = board.children[r];
-        if (rowDiv) {
-          const tile = rowDiv.children[c];
-          if (tile) {
-            // Calculate green shade based on step
-            const greenShades = ['#a5d6a7', '#66bb6a', '#43a047', '#2e7d32', '#1b5e20'];
-            const idx = Math.min(step - 1, greenShades.length - 1);
-            tile.style.boxShadow = `0 0 0 3px ${greenShades[idx]} inset`;
-          }
-        }
-      }
-      if (dist === movement) continue;
-      for (const [nr, nc] of getAdjacent(r, c)) {
-        if (!visited[nr][nc]) {
-          // Wind logic: get direction from (r,c) to (nr,nc)
-          let cost = 1;
-          if (selectedWind !== '0') {
-            // Use getDirection to determine the move direction
-            const dir = getDirection(r, c, nr, nc);
-            if (selectedWind === '←') {
-              if (dir === '←') cost = 0.5;
-              else if (dir === '→') cost = 2;
-            } else if (selectedWind === '→') {
-              if (dir === '→') cost = 0.5;
-              else if (dir === '←') cost = 2;
-            } else if (selectedWind === '↑') {
-              if (dir === '↑') cost = 0.5;
-              else if (dir === '↓') cost = 2;
-            } else if (selectedWind === '↓') {
-              if (dir === '↓') cost = 0.5;
-              else if (dir === '↑') cost = 2;
-            }
-            // All diagonal/offset moves are always cost 1
-          }
-          // Only allow if within movement points
-          if (dist + cost <= movement) {
-            visited[nr][nc] = true;
-            queue.push([nr, nc, dist + cost]);
-          }
-        }
-      }
-    }
   }
 
   // Clear previous highlights
@@ -247,15 +181,15 @@ document.addEventListener('DOMContentLoaded', function () {
     <input id="step-input" type="number" min="1" max="5" value="1" style="width:60px; text-align:center; font-size:1.1em; margin-bottom:18px;">
     <div style="margin-bottom:6px; font-weight:bold;">Wiatr</div>
     <div id="wind-buttons" style="display:grid; grid-template-columns:repeat(3,32px); grid-template-rows:repeat(3,32px); grid-gap:4px; margin-bottom:6px; justify-items:center; align-items:center; justify-content:center;">
-      <div></div>
-      <button type="button" class="wind-btn" data-dir="↑" title="Północ" style="width:32px; height:32px; font-size:1.2em; padding:0;">↑</button>
-      <div></div>
-      <button type="button" class="wind-btn" data-dir="←" title="Zachód" style="width:32px; height:32px; font-size:1.2em; padding:0;">←</button>
+      <button type="button" class="wind-btn" data-dir="↖" title="NW" style="width:32px; height:32px; font-size:1.2em; padding:0;">↖</button>
+      <button type="button" class="wind-btn" data-dir="↑" title="N" style="width:32px; height:32px; font-size:1.2em; padding:0;">↑</button>
+      <button type="button" class="wind-btn" data-dir="↗" title="NE" style="width:32px; height:32px; font-size:1.2em; padding:0;">↗</button>
+      <button type="button" class="wind-btn" data-dir="←" title="W" style="width:32px; height:32px; font-size:1.2em; padding:0;">←</button>
       <button type="button" class="wind-btn" data-dir="0" title="Brak wiatru" style="width:32px; height:32px; font-size:1.2em; padding:0;">•</button>
-      <button type="button" class="wind-btn" data-dir="→" title="Wschód" style="width:32px; height:32px; font-size:1.2em; padding:0;">→</button>
-      <div></div>
-      <button type="button" class="wind-btn" data-dir="↓" title="Południe" style="width:32px; height:32px; font-size:1.2em; padding:0;">↓</button>
-      <div></div>
+      <button type="button" class="wind-btn" data-dir="→" title="E" style="width:32px; height:32px; font-size:1.2em; padding:0;">→</button>
+      <button type="button" class="wind-btn" data-dir="↙" title="SW" style="width:32px; height:32px; font-size:1.2em; padding:0;">↙</button>
+      <button type="button" class="wind-btn" data-dir="↓" title="S" style="width:32px; height:32px; font-size:1.2em; padding:0;">↓</button>
+      <button type="button" class="wind-btn" data-dir="↘" title="SE" style="width:32px; height:32px; font-size:1.2em; padding:0;">↘</button>
     </div>
   `;
 
@@ -267,12 +201,39 @@ document.addEventListener('DOMContentLoaded', function () {
     renderShip();
     const moveVal = parseInt(moveInput.value);
     const stepVal = parseInt(stepInput.value);
-    if (!isNaN(moveVal) && moveVal > 0 && !isNaN(stepVal) && stepVal > 0) {
-      for (let s = 1; s <= stepVal; s++) {
-        showMovementRange(shipRow, shipCol, moveVal * s, s, stepVal);
+
+    // Use Dijkstra's algorithm to find all reachable tiles with minimal cost
+    const costs = Array.from({ length: numRows }, () => Array(numCols).fill(Infinity));
+    const queue = [];
+    queue.push({ row: shipRow, col: shipCol, cost: 0 });
+    costs[shipRow][shipCol] = 0;
+
+    while (queue.length > 0) {
+      const { row, col, cost } = queue.shift();
+      const adj = getAdjacent(row, col);
+      for (const [nr, nc] of adj) {
+        const dr = nr - row;
+        const dc = nc - col;
+        const moveCost = Math.abs(dr) === 1 && Math.abs(dc) === 1 ? 1.5 : 1;
+        const newCost = cost + moveCost;
+        if (newCost <= moveVal && newCost < costs[nr][nc]) {
+          costs[nr][nc] = newCost;
+          queue.push({ row: nr, col: nc, cost: newCost });
+        }
+      }
+    }
+
+    // Highlight all reachable tiles except the ship's current position
+    for (let r = 0; r < numRows; r++) {
+      for (let c = 0; c < numCols; c++) {
+        if (costs[r][c] <= moveVal && !(r === shipRow && c === shipCol)) {
+          const tile = board.children[r].children[c];
+          tile.style.boxShadow = '0 0 0 3px #4caf50 inset';
+        }
       }
     }
   }
+
   moveInput.addEventListener('input', updateMovementRange);
   stepInput.addEventListener('input', updateMovementRange);
   updateMovementRange();
