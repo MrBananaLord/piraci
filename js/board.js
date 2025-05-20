@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Visualize movement range from (midRow, midCol)
-  function showMovementRange(startRow, startCol, movement) {
+  function showMovementRange(startRow, startCol, movement, step, maxStep) {
     // BFS to find all tiles within movement points
     const visited = Array.from({ length: numRows }, (_, r) =>
       Array(r % 2 === 0 ? 21 : 20).fill(false)
@@ -97,11 +97,16 @@ document.addEventListener('DOMContentLoaded', function () {
       const [r, c, dist] = queue.shift();
       if (dist > movement) continue;
       // Mark tile visually (skip ship tile)
-      if (!(r === startRow && c === startCol)) {
+      if (!(r === startRow && c === startCol) && dist > (movement - (parseInt(moveInput.value) || 1))) {
         const rowDiv = board.children[r];
         if (rowDiv) {
           const tile = rowDiv.children[c];
-          if (tile) tile.style.boxShadow = '0 0 0 3px #43a047 inset'; // green
+          if (tile) {
+            // Calculate green shade based on step
+            const greenShades = ['#a5d6a7', '#66bb6a', '#43a047', '#2e7d32', '#1b5e20'];
+            const idx = Math.min(step - 1, greenShades.length - 1);
+            tile.style.boxShadow = `0 0 0 3px ${greenShades[idx]} inset`;
+          }
         }
       }
       if (dist === movement) continue;
@@ -141,6 +146,8 @@ document.addEventListener('DOMContentLoaded', function () {
   sidePanel.innerHTML = `
     <label for="move-input" style="font-weight:bold; margin-bottom:6px;">Ruch</label>
     <input id="move-input" type="number" min="0" value="2" style="width:60px; text-align:center; font-size:1.1em; margin-bottom:18px;">
+    <label for="step-input" style="font-weight:bold; margin-bottom:6px;">Kroki</label>
+    <input id="step-input" type="number" min="1" max="5" value="1" style="width:60px; text-align:center; font-size:1.1em; margin-bottom:18px;">
     <div style="margin-bottom:6px; font-weight:bold;">Wiatr</div>
     <div id="wind-buttons" style="display:grid; grid-template-columns:repeat(3,32px); grid-gap:4px; margin-bottom:6px; justify-items:center; align-items:center; justify-content:center;">
       <button type="button" class="wind-btn" data-dir="↖" title="Północny zachód" style="width:32px; height:32px; font-size:1.2em; padding:0;">↖</button>
@@ -157,14 +164,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Initial movement range
   const moveInput = sidePanel.querySelector('#move-input');
+  const stepInput = sidePanel.querySelector('#step-input');
   function updateMovementRange() {
     clearMovementRange();
-    const val = parseInt(moveInput.value);
-    if (!isNaN(val) && val > 0) {
-      showMovementRange(midRow, midCol, val);
+    const moveVal = parseInt(moveInput.value);
+    const stepVal = parseInt(stepInput.value);
+    if (!isNaN(moveVal) && moveVal > 0 && !isNaN(stepVal) && stepVal > 0) {
+      for (let s = 1; s <= stepVal; s++) {
+        showMovementRange(midRow, midCol, moveVal * s, s, stepVal);
+      }
     }
   }
   moveInput.addEventListener('input', updateMovementRange);
+  stepInput.addEventListener('input', updateMovementRange);
   updateMovementRange();
 
   // Only add to board tab
