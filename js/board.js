@@ -22,9 +22,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const rowDiv = document.createElement('div');
     rowDiv.style.display = 'flex';
     rowDiv.style.marginBottom = '0'; // removed spacing between rows
-    if (!isEven) {
-      rowDiv.style.marginLeft = squareSize / 2 + 'px';
-    }
     const numSquares = isEven ? 21 : 20;
     for (let col = 0; col < numSquares; col++) {
       const square = document.createElement('div');
