@@ -205,6 +205,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // For each step, calculate reachable tiles with wind and diagonal cost
     const greenShades = ['#a5d6a7', '#66bb6a', '#43a047', '#2e7d32', '#1b5e20'];
+    // Track which step each tile is first reached at
+    const stepReached = Array.from({ length: numRows }, () => Array(numCols).fill(0));
     for (let s = 1; s <= stepVal; s++) {
       // Dijkstra for this step
       const costs = Array.from({ length: numRows }, () => Array(numCols).fill(Infinity));
@@ -233,17 +235,22 @@ document.addEventListener('DOMContentLoaded', function () {
           if (newCost <= moveVal * s && newCost < costs[nr][nc]) {
             costs[nr][nc] = newCost;
             queue.push({ row: nr, col: nc, cost: newCost });
+            // Mark the first step this tile is reached at
+            if (stepReached[nr][nc] === 0 && !(nr === shipRow && nc === shipCol)) {
+              stepReached[nr][nc] = s;
+            }
           }
         }
       }
-      // Highlight all reachable tiles for this step except the ship's current position
-      for (let r = 0; r < numRows; r++) {
-        for (let c = 0; c < numCols; c++) {
-          if (costs[r][c] <= moveVal * s && !(r === shipRow && c === shipCol)) {
-            const tile = board.children[r].children[c];
-            const idx = Math.min(s - 1, greenShades.length - 1);
-            tile.style.boxShadow = `0 0 0 3px ${greenShades[idx]} inset`;
-          }
+    }
+    // Highlight all reachable tiles for each step except the ship's current position
+    for (let r = 0; r < numRows; r++) {
+      for (let c = 0; c < numCols; c++) {
+        const s = stepReached[r][c];
+        if (s > 0) {
+          const tile = board.children[r].children[c];
+          const idx = Math.min(s - 1, greenShades.length - 1);
+          tile.style.boxShadow = `0 0 0 3px ${greenShades[idx]} inset`;
         }
       }
     }
