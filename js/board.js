@@ -44,4 +44,53 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   boardContainer.innerHTML = '';
   boardContainer.appendChild(board);
+
+  // Add side input for "Ruch" and "Wiatr"
+  const sidePanel = document.createElement('div');
+  sidePanel.style.position = 'absolute';
+  sidePanel.style.top = '32px';
+  sidePanel.style.right = '32px';
+  sidePanel.style.background = '#fff';
+  sidePanel.style.border = '1px solid #ccc';
+  sidePanel.style.borderRadius = '8px';
+  sidePanel.style.padding = '16px 20px';
+  sidePanel.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+  sidePanel.style.display = 'flex';
+  sidePanel.style.flexDirection = 'column';
+  sidePanel.style.alignItems = 'center';
+  sidePanel.innerHTML = `
+    <label for="move-input" style="font-weight:bold; margin-bottom:6px;">Ruch</label>
+    <input id="move-input" type="number" min="0" value="2" style="width:60px; text-align:center; font-size:1.1em; margin-bottom:18px;">
+    <div style="margin-bottom:6px; font-weight:bold;">Wiatr</div>
+    <div id="wind-buttons" style="display:grid; grid-template-columns:repeat(3,32px); grid-gap:4px; margin-bottom:6px; justify-items:center; align-items:center; justify-content:center;">
+      <button type="button" class="wind-btn" data-dir="↖" title="Północny zachód" style="width:32px; height:32px; font-size:1.2em; padding:0;">↖</button>
+      <button type="button" class="wind-btn" data-dir="↑" title="Północ" style="width:32px; height:32px; font-size:1.2em; padding:0;">↑</button>
+      <button type="button" class="wind-btn" data-dir="↗" title="Północny wschód" style="width:32px; height:32px; font-size:1.2em; padding:0;">↗</button>
+      <button type="button" class="wind-btn" data-dir="←" title="Zachód" style="width:32px; height:32px; font-size:1.2em; padding:0;">←</button>
+      <button type="button" class="wind-btn" data-dir="0" title="Brak wiatru" style="width:32px; height:32px; font-size:1.2em; padding:0;">•</button>
+      <button type="button" class="wind-btn" data-dir="→" title="Wschód" style="width:32px; height:32px; font-size:1.2em; padding:0;">→</button>
+      <button type="button" class="wind-btn" data-dir="↙" title="Południowy zachód" style="width:32px; height:32px; font-size:1.2em; padding:0;">↙</button>
+      <button type="button" class="wind-btn" data-dir="↓" title="Południe" style="width:32px; height:32px; font-size:1.2em; padding:0;">↓</button>
+      <button type="button" class="wind-btn" data-dir="↘" title="Południowy wschód" style="width:32px; height:32px; font-size:1.2em; padding:0;">↘</button>
+    </div>
+  `;
+  // Only add to board tab
+  if (boardContainer) {
+    boardContainer.style.position = 'relative';
+    boardContainer.appendChild(sidePanel);
+  }
+  // Wind button logic
+  const windBtns = sidePanel.querySelectorAll('.wind-btn');
+  let selectedWind = '0';
+  windBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      windBtns.forEach(b => b.style.background = '');
+      btn.style.background = '#ffe082';
+      selectedWind = btn.dataset.dir;
+    });
+  });
+  // Set default wind to 'no wind'
+  windBtns.forEach(btn => {
+    if (btn.dataset.dir === '0') btn.style.background = '#ffe082';
+  });
 });
