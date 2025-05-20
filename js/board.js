@@ -37,6 +37,15 @@ document.addEventListener('DOMContentLoaded', function () {
         square.style.background = '#ffe082';
         square.style.border = '2px solid #ff9800';
         square.title = 'Środek';
+        // Add pirate ship icon
+        const ship = document.createElement('span');
+        ship.textContent = '⛵️';
+        ship.style.position = 'absolute';
+        ship.style.left = '50%';
+        ship.style.top = '50%';
+        ship.style.transform = 'translate(-50%, -50%)';
+        ship.style.fontSize = '1.5em';
+        square.appendChild(ship);
       }
       rowDiv.appendChild(square);
     }
@@ -44,6 +53,77 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   boardContainer.innerHTML = '';
   boardContainer.appendChild(board);
+
+  // Helper: get adjacent tiles for offset grid
+  function getAdjacent(row, col) {
+    // Even row: offset right, Odd row: offset left
+    // For even rows, the NE/SE are (row-1,col+1)/(row+1,col+1)
+    // For odd rows, the NE/SE are (row-1,col)/(row+1,col)
+    const isEven = row % 2 === 0;
+    const adj = [];
+    // N
+    if (row > 0) adj.push([row - 1, col]);
+    // S
+    if (row < numRows - 1) adj.push([row + 1, col]);
+    // W
+    if (col > 0) adj.push([row, col - 1]);
+    // E
+    if ((isEven && col < 20) || (!isEven && col < 19)) adj.push([row, col + 1]);
+    // NW
+    if (row > 0) adj.push([row - 1, isEven ? col - 1 : col]);
+    // NE
+    if (row > 0) adj.push([row - 1, isEven ? col : col + 1]);
+    // SW
+    if (row < numRows - 1) adj.push([row + 1, isEven ? col - 1 : col]);
+    // SE
+    if (row < numRows - 1) adj.push([row + 1, isEven ? col : col + 1]);
+    // Filter out-of-bounds
+    return adj.filter(([r, c]) => {
+      const even = r % 2 === 0;
+      const maxCol = even ? 20 : 19;
+      return r >= 0 && r < numRows && c >= 0 && c <= maxCol;
+    });
+  }
+
+  // Visualize movement range from (midRow, midCol)
+  function showMovementRange(startRow, startCol, movement) {
+    // BFS to find all tiles within movement points
+    const visited = Array.from({ length: numRows }, (_, r) =>
+      Array(r % 2 === 0 ? 21 : 20).fill(false)
+    );
+    const queue = [[startRow, startCol, 0]];
+    visited[startRow][startCol] = true;
+    while (queue.length) {
+      const [r, c, dist] = queue.shift();
+      if (dist > movement) continue;
+      // Mark tile visually (skip ship tile)
+      if (!(r === startRow && c === startCol)) {
+        const rowDiv = board.children[r];
+        if (rowDiv) {
+          const tile = rowDiv.children[c];
+          if (tile) tile.style.boxShadow = '0 0 0 3px #43a047 inset'; // green
+        }
+      }
+      if (dist === movement) continue;
+      for (const [nr, nc] of getAdjacent(r, c)) {
+        if (!visited[nr][nc]) {
+          visited[nr][nc] = true;
+          queue.push([nr, nc, dist + 1]);
+        }
+      }
+    }
+  }
+
+  // Clear previous highlights
+  function clearMovementRange() {
+    for (let r = 0; r < numRows; r++) {
+      const rowDiv = board.children[r];
+      if (!rowDiv) continue;
+      for (let c = 0; c < rowDiv.children.length; c++) {
+        rowDiv.children[c].style.boxShadow = '';
+      }
+    }
+  }
 
   // Add side input for "Ruch" and "Wiatr"
   const sidePanel = document.createElement('div');
@@ -74,6 +154,19 @@ document.addEventListener('DOMContentLoaded', function () {
       <button type="button" class="wind-btn" data-dir="↘" title="Południowy wschód" style="width:32px; height:32px; font-size:1.2em; padding:0;">↘</button>
     </div>
   `;
+
+  // Initial movement range
+  const moveInput = sidePanel.querySelector('#move-input');
+  function updateMovementRange() {
+    clearMovementRange();
+    const val = parseInt(moveInput.value);
+    if (!isNaN(val) && val > 0) {
+      showMovementRange(midRow, midCol, val);
+    }
+  }
+  moveInput.addEventListener('input', updateMovementRange);
+  updateMovementRange();
+
   // Only add to board tab
   if (boardContainer) {
     boardContainer.style.position = 'relative';
