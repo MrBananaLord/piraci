@@ -199,36 +199,51 @@ document.addEventListener('DOMContentLoaded', function () {
   function updateMovementRange() {
     clearMovementRange();
     renderShip();
-    const moveVal = parseInt(moveInput.value);
+    const moveVal = parseFloat(moveInput.value);
     const stepVal = parseInt(stepInput.value);
+    if (isNaN(moveVal) || moveVal <= 0 || isNaN(stepVal) || stepVal <= 0) return;
 
-    // Use Dijkstra's algorithm to find all reachable tiles with minimal cost
-    const costs = Array.from({ length: numRows }, () => Array(numCols).fill(Infinity));
-    const queue = [];
-    queue.push({ row: shipRow, col: shipCol, cost: 0 });
-    costs[shipRow][shipCol] = 0;
-
-    while (queue.length > 0) {
-      const { row, col, cost } = queue.shift();
-      const adj = getAdjacent(row, col);
-      for (const [nr, nc] of adj) {
-        const dr = nr - row;
-        const dc = nc - col;
-        const moveCost = Math.abs(dr) === 1 && Math.abs(dc) === 1 ? 1.5 : 1;
-        const newCost = cost + moveCost;
-        if (newCost <= moveVal && newCost < costs[nr][nc]) {
-          costs[nr][nc] = newCost;
-          queue.push({ row: nr, col: nc, cost: newCost });
+    // For each step, calculate reachable tiles with wind and diagonal cost
+    const greenShades = ['#a5d6a7', '#66bb6a', '#43a047', '#2e7d32', '#1b5e20'];
+    for (let s = 1; s <= stepVal; s++) {
+      // Dijkstra for this step
+      const costs = Array.from({ length: numRows }, () => Array(numCols).fill(Infinity));
+      const queue = [];
+      queue.push({ row: shipRow, col: shipCol, cost: 0 });
+      costs[shipRow][shipCol] = 0;
+      while (queue.length > 0) {
+        const { row, col, cost } = queue.shift();
+        const adj = getAdjacent(row, col);
+        for (const [nr, nc] of adj) {
+          const dr = nr - row;
+          const dc = nc - col;
+          let moveCost = (Math.abs(dr) === 1 && Math.abs(dc) === 1) ? 1.5 : 1;
+          // Wind logic: cheaper in wind dir, more expensive in opposite
+          if (selectedWind !== '0') {
+            const dir = getDirection(row, col, nr, nc);
+            if (dir === selectedWind) moveCost *= 0.5;
+            else {
+              // Opposite direction
+              const windOrder = ['↑', '↗', '→', '↘', '↓', '↙', '←', '↖'];
+              const oppDir = windOrder[(windOrder.indexOf(selectedWind) + 4) % 8];
+              if (dir === oppDir) moveCost *= 2;
+            }
+          }
+          const newCost = cost + moveCost;
+          if (newCost <= moveVal * s && newCost < costs[nr][nc]) {
+            costs[nr][nc] = newCost;
+            queue.push({ row: nr, col: nc, cost: newCost });
+          }
         }
       }
-    }
-
-    // Highlight all reachable tiles except the ship's current position
-    for (let r = 0; r < numRows; r++) {
-      for (let c = 0; c < numCols; c++) {
-        if (costs[r][c] <= moveVal && !(r === shipRow && c === shipCol)) {
-          const tile = board.children[r].children[c];
-          tile.style.boxShadow = '0 0 0 3px #4caf50 inset';
+      // Highlight all reachable tiles for this step except the ship's current position
+      for (let r = 0; r < numRows; r++) {
+        for (let c = 0; c < numCols; c++) {
+          if (costs[r][c] <= moveVal * s && !(r === shipRow && c === shipCol)) {
+            const tile = board.children[r].children[c];
+            const idx = Math.min(s - 1, greenShades.length - 1);
+            tile.style.boxShadow = `0 0 0 3px ${greenShades[idx]} inset`;
+          }
         }
       }
     }
