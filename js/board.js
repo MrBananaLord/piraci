@@ -34,12 +34,12 @@ document.addEventListener('DOMContentLoaded', function () {
       square.style.position = 'relative';
       // Mark the middle tile
       if (row === midRow && isEven && col === midCol) {
-        square.style.background = '#ffe082';
-        square.style.border = '2px solid #ff9800';
         square.title = 'Środek';
+        // No special background or border for the center tile
         // Add pirate ship icon
         const ship = document.createElement('span');
         ship.textContent = '⛵️';
+        ship.className = 'ship-icon';
         ship.style.position = 'absolute';
         ship.style.left = '50%';
         ship.style.top = '50%';
@@ -72,8 +72,8 @@ document.addEventListener('DOMContentLoaded', function () {
         if (ship) tile.removeChild(ship);
         // Restore center tile background if needed
         if (r === midRow && c === midCol) {
-          tile.style.background = '#ffe082';
-          tile.style.border = '2px solid #ff9800';
+          tile.style.background = '#f4f4f4';
+          tile.style.border = '1px solid #bbb';
         } else {
           tile.style.background = '#f4f4f4';
           tile.style.border = '1px solid #bbb';
@@ -187,33 +187,24 @@ document.addEventListener('DOMContentLoaded', function () {
       for (const [nr, nc] of getAdjacent(r, c)) {
         if (!visited[nr][nc]) {
           // Wind logic: get direction from (r,c) to (nr,nc)
-          const dir = getDirection(r, c, nr, nc);
           let cost = 1;
           if (selectedWind !== '0') {
-            // Determine movement axis, handle offset grid for left/right
-            const colChange = nc - c;
-            const rowChange = nr - r;
-            // For left/right, treat as left if colChange < 0 or (colChange === 0 and rowChange !== 0 and nc !== c)
-            // For right, treat as right if colChange > 0 or (colChange === 0 and rowChange !== 0 and nc !== c)
-            const isLeft = (colChange < 0) || (colChange === 0 && rowChange !== 0 && nc < c);
-            const isRight = (colChange > 0) || (colChange === 0 && rowChange !== 0 && nc > c);
-            if (selectedWind === '↑' && nr < r) {
-              cost = 0.5;
-            } else if (selectedWind === '↓' && nr > r) {
-              cost = 0.5;
-            } else if (selectedWind === '←' && isLeft) {
-              cost = 0.5;
-            } else if (selectedWind === '→' && isRight) {
-              cost = 0.5;
-            } else if (selectedWind === '↑' && nr > r) {
-              cost = 2;
-            } else if (selectedWind === '↓' && nr < r) {
-              cost = 2;
-            } else if (selectedWind === '←' && isRight) {
-              cost = 2;
-            } else if (selectedWind === '→' && isLeft) {
-              cost = 2;
+            // Use getDirection to determine the move direction
+            const dir = getDirection(r, c, nr, nc);
+            if (selectedWind === '←') {
+              if (dir === '←') cost = 0.5;
+              else if (dir === '→') cost = 2;
+            } else if (selectedWind === '→') {
+              if (dir === '→') cost = 0.5;
+              else if (dir === '←') cost = 2;
+            } else if (selectedWind === '↑') {
+              if (dir === '↑') cost = 0.5;
+              else if (dir === '↓') cost = 2;
+            } else if (selectedWind === '↓') {
+              if (dir === '↓') cost = 0.5;
+              else if (dir === '↑') cost = 2;
             }
+            // All diagonal/offset moves are always cost 1
           }
           // Only allow if within movement points
           if (dist + cost <= movement) {
