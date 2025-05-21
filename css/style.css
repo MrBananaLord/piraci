@@ -1,114 +1,201 @@
 /* Main styles for the Piraci app */
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   text-align: center;
-  margin-top: 50px;
+  margin: 0;
+  padding: 20px 0;
+  background-color: #f9f9f9;
+  color: #333;
+  line-height: 1.6;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  color: #2c3e50;
+}
+
+h1 {
+  font-size: 2.2em;
+  margin-bottom: 20px;
 }
 
 button {
   padding: 10px 20px;
   cursor: pointer;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+button:active {
+  transform: translateY(1px);
 }
 
 .card {
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 10px;
-  margin: 10px;
-  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 15px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s;
+}
+
+.card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 #current-event .card {
-  background-color: #e0f7fa;
+  background-color: #e1f5fe;
+  border-left: 4px solid #03a9f4;
+  animation: cardAppear 0.3s ease-out;
 }
 
 #event-deck {
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
+  border-radius: 8px;
   width: 500px;
+  padding: 20px;
   padding-bottom: 20px;
   flex: auto;
+  background-color: #fff;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
 }
 
 #config {
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
+  border-radius: 8px;
   margin-left: 20px;
-  padding: 0 20px;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
 }
 
 #main {
   display: flex;
+  justify-content: center;
+  margin: 0 auto;
+  max-width: 1200px;
+  padding: 0 20px;
 }
 
 #resources-config {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
+  margin-top: 15px;
 }
 
 .resource-config-item {
-  border: 1px solid #eee;
+  border: 1px solid #e0e0e0;
   margin: 10px 0;
-  padding: 8px;
-  border-radius: 4px;
+  padding: 12px;
+  border-radius: 6px;
   background: #fafbfc;
   text-align: left;
   max-width: 320px;
   margin-left: auto;
   margin-right: auto;
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.resource-config-item:hover {
+  border-color: #bdbdbd;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .resource-config-item strong {
-  font-size: 1.08em;
+  font-size: 1.1em;
+  color: #2c3e50;
+  display: block;
+  margin-bottom: 8px;
+}
+
+input[type="number"] {
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 0.9em;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+input[type="number"]:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
 }
 
 .resource-config-item input[type="number"],
 .resource-cost-input,
 .resource-weight-input {
   margin: 0 2px;
-  padding: 2px 4px;
-  border-radius: 3px;
+  padding: 6px 8px;
+  border-radius: 4px;
   border: 1px solid #ccc;
-  width: 48px;
 }
 
 .resource-cost-input {
-  width: 50px;
+  width: 60px;
 }
 
 .resource-weight-input {
-  width: 40px;
+  width: 50px;
 }
 
 .resource-config-item div {
-  margin-right: 8px;
+  margin: 8px 0;
+  display: flex;
+  align-items: center;
 }
 
 .tab-btn {
-  padding: 12px 32px;
+  padding: 14px 32px;
   margin: 0 8px 0;
   font-size: 1.1em;
-  border-radius: 6px 6px 0 0;
-  border: 1px solid #ccc;
+  border-radius: 8px 8px 0 0;
+  border: 1px solid #ddd;
   border-bottom: none;
   background: #f5f5f5;
-  transition: background 0.2s;
+  transition: all 0.2s;
+  color: #666;
+  font-weight: 500;
+}
+
+.tab-btn:hover {
+  background: #e9e9e9;
+  color: #333;
 }
 
 .tab-btn[aria-selected="true"] {
   background: #fff;
+  color: #3498db;
   font-weight: bold;
   border-bottom: 2px solid #fff;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05);
 }
 
 #tab-content {
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
   border-radius: 0 0 8px 8px;
   background: #fff;
   max-width: 1100px;
   margin: 0 auto 32px auto;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  padding: 16px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  padding: 24px;
 }
 
 #tabs {
@@ -124,64 +211,82 @@ button {
   top: 50%;
   transform: translate(-50%, -50%);
   font-size: 1.5em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  z-index: 2;
 }
 
 /* Board UI Components */
 .board-input-label {
-  font-weight: bold;
-  margin-bottom: 6px;
+  font-weight: 600;
+  margin-bottom: 8px;
   display: block;
+  color: #2c3e50;
 }
 
 .board-input {
-  width: 60px;
+  width: 70px;
   text-align: center;
   font-size: 1.1em;
-  margin-bottom: 18px;
+  margin-bottom: 20px;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .wind-label {
-  margin-bottom: 6px;
-  font-weight: bold;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #2c3e50;
 }
 
 .wind-button-grid {
   display: grid;
-  grid-template-columns: repeat(3, 32px);
-  grid-template-rows: repeat(3, 32px);
-  grid-gap: 4px;
-  margin-bottom: 6px;
+  grid-template-columns: repeat(3, 38px);
+  grid-template-rows: repeat(3, 38px);
+  grid-gap: 5px;
+  margin-bottom: 10px;
   justify-items: center;
   align-items: center;
   justify-content: center;
 }
 
 .wind-btn {
-  width: 32px;
-  height: 32px;
+  width: 38px;
+  height: 38px;
   font-size: 1.2em;
   padding: 0;
-  transition: background 0.2s;
+  transition: all 0.2s;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.wind-btn:hover {
+  background: #e0e0e0;
 }
 
 .wind-selected {
-  background: #ffe082 !important;
+  background: #ffca28 !important;
+  border-color: #ffb300 !important;
+  box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.3);
 }
 
 /* Board Container and Side Panel */
 .board-container {
   position: relative;
+  padding: 20px 0;
 }
 
 .board-side-panel {
   position: absolute;
-  top: 32px;
-  right: 32px;
+  top: 40px;
+  right: 40px;
   background: #fff;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 16px 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -194,6 +299,11 @@ button {
   align-items: center;
   justify-content: center;
   margin: 0 auto;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  padding: 15px;
+  background: #f0f0f0;
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
 }
 
 .board-row {
@@ -203,16 +313,26 @@ button {
 
 .board-tile {
   border: 1px solid #bbb;
-  background: #f4f4f4;
+  background: #f9f9f9;
   box-sizing: border-box;
   display: inline-block;
   position: relative;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.board-tile:hover {
+  background: #e9e9e9;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
 }
 
 /* Ship tile styling */
 .ship-tile {
   background: #ffe082 !important;
   border: 2px solid #ff9800 !important;
+  box-shadow: 0 0 10px rgba(255, 152, 0, 0.5);
+  z-index: 1;
 }
 
 /* Movement range indicators */
@@ -228,24 +348,140 @@ button {
   right: 0;
   bottom: 0;
   pointer-events: none;
+  border-radius: 2px;
 }
 
 .step-1.movement-range::after {
   box-shadow: 0 0 0 3px #a5d6a7 inset;
+  background-color: rgba(165, 214, 167, 0.15);
 }
 
 .step-2.movement-range::after {
   box-shadow: 0 0 0 3px #66bb6a inset;
+  background-color: rgba(102, 187, 106, 0.15);
 }
 
 .step-3.movement-range::after {
   box-shadow: 0 0 0 3px #43a047 inset;
+  background-color: rgba(67, 160, 71, 0.15);
 }
 
 .step-4.movement-range::after {
   box-shadow: 0 0 0 3px #2e7d32 inset;
+  background-color: rgba(46, 125, 50, 0.15);
 }
 
 .step-5.movement-range::after {
   box-shadow: 0 0 0 3px #1b5e20 inset;
+  background-color: rgba(27, 94, 32, 0.15);
+}
+
+.draw-card {
+  margin: 5px;
+  font-size: 1em;
+}
+
+.draw-card[data-level="1"] {
+  background-color: #4caf50;
+}
+
+.draw-card[data-level="1"]:hover {
+  background-color: #388e3c;
+}
+
+.draw-card[data-level="2"] {
+  background-color: #ff9800;
+}
+
+.draw-card[data-level="2"]:hover {
+  background-color: #f57c00;
+}
+
+.draw-card[data-level="3"] {
+  background-color: #f44336;
+}
+
+.draw-card[data-level="3"]:hover {
+  background-color: #d32f2f;
+}
+
+/* Event display styling */
+#current-event,
+#event-log {
+  margin-top: 20px;
+  padding: 10px;
+}
+
+#event-log {
+  max-height: 300px;
+  overflow-y: auto;
+  border-top: 1px dashed #ccc;
+  margin-top: 20px;
+  padding-top: 15px;
+}
+
+/* Responsive design */
+@media (max-width: 1200px) {
+  #main {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #config {
+    margin-left: 0;
+    margin-top: 20px;
+    width: 500px;
+    max-width: 100%;
+  }
+
+  #event-deck {
+    width: 100%;
+    max-width: 600px;
+  }
+}
+
+@media (max-width: 768px) {
+  .tab-btn {
+    padding: 10px 20px;
+    font-size: 1em;
+  }
+
+  #tab-content {
+    padding: 16px;
+  }
+
+  .board-side-panel {
+    position: static;
+    margin-top: 20px;
+    width: 100%;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .game-board {
+    transform: scale(0.9);
+    margin-bottom: 20px;
+  }
+}
+
+/* Animation for card drawing */
+@keyframes cardAppear {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Additional visual enhancements */
+hr {
+  border: 0;
+  height: 1px;
+  background: #e0e0e0;
+  margin: 20px 0;
 }
