@@ -413,7 +413,7 @@ input[type="number"]:focus {
 }
 
 #event-log {
-  max-height: 300px;
+  max-height: 600px;
   overflow-y: auto;
   border-top: 1px dashed #ccc;
   margin-top: 20px;
