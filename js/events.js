@@ -1,9 +1,10 @@
-// Event classes and related logic
+// Event system classes and event generation logic
+
 class RewardsGenerator {
   constructor(level, points) {
     this.level = level;
     this.points = points;
-    this.rewardsPool = Object.values(config.resources);
+    this.rewardsPool = config.getAllResources();
   }
 
   rewards() {
@@ -44,6 +45,8 @@ class Enemy {
         defence: stageDefence
       });
     }
+
+    // Balance the points
     let totalAttack = this.stages.reduce((sum, s) => sum + s.attack, 0);
     let totalDefence = this.stages.reduce((sum, s) => sum + s.defence, 0);
     let diff = this.points - (totalAttack + totalDefence);
@@ -51,30 +54,59 @@ class Enemy {
       this.stages[0].attack += diff;
     }
   }
+
+  renderTemplate() {
+    return `
+      <h4>${this.name}</h4>
+      <p>Trudność: ${this.points}</p>
+      <h5>Etapy walki:</h5>
+      <ol>
+      ${this.stages.map((stage, i) => `
+        <li>Etap ${i + 1}: Atak: ${stage.attack}, Obrona: ${stage.defence}</li>
+      `).join('')}
+      </ol>
+      <p>Zdrowie: ${this.health}<p>
+    `;
+  }
 }
 
 class Fight {
   constructor(level = 1) {
-    this.name = "Walka!"
+    this.name = "Walka!";
     this.enemy = new Enemy("Wróg", level);
-    this.rewards = new RewardsGenerator(level, this.enemy.points).rewards()
+    this.rewards = new RewardsGenerator(level, this.enemy.points).rewards();
   }
 
-  get body() {
+  renderTemplate() {
     return `
       <h3>${this.name}</h3>
-      <h4>${this.enemy.name}</h4>
-      <p>Trudność: ${this.enemy.points}</p>
-        <h5>Etapy walki:</h5>
-        <ol>
-        ${this.enemy.stages.map((stage, i) => `
-          <li>Etap ${i + 1}: Atak: ${stage.attack}, Obrona: ${stage.defence}</li>
-        `).join('')}
-        </ol>
-      <p>Zdrowie: ${this.enemy.health}<p>
+      ${this.enemy.renderTemplate()}
       <h4>Nagroda</h4> 
       <p>${this.rewards.join(", ")}</p>
     `;
+  }
+}
+
+class EventSystem {
+  constructor() {
+    this.events = [];
+  }
+
+  createEvent(level = 1) {
+    return new Event(level);
+  }
+
+  addEvent(event) {
+    this.events.push(event);
+    return event;
+  }
+
+  getEvents() {
+    return this.events;
+  }
+
+  clearEvents() {
+    this.events = [];
   }
 }
 
@@ -82,20 +114,22 @@ class Event {
   constructor(level = 1) {
     this.level = level;
     this.action = new Fight(level);
+    this.created = new Date();
   }
 
-  get body() {
+  renderTemplate() {
     return `
       <div class="card">
         <p>Poziom: ${this.level}</p>
-        ${this.action.body}
+        ${this.action.renderTemplate()}
       </div>
-    `
+    `;
+  }
+
+  get body() {
+    return this.renderTemplate();
   }
 }
 
-// UI helper function
-const printEvents = (events) => {
-  const eventDisplay = document.getElementById("event-display");
-  eventDisplay.innerHTML = events.map(event => event.body).join('');
-};
+// Initialize the event system
+const eventSystem = new EventSystem();

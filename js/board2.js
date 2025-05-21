@@ -1,66 +1,132 @@
-// js/board.js
-// Generates a hex-like offset board and marks the middle tile
+// Generates a regular grid board and marks the middle tile
 
-document.addEventListener('DOMContentLoaded', function () {
-  const boardContainer = document.getElementById('plansza2-content');
-  const numRows = 21;
-  const numCols = 21;
-  const squareSize = 32; // px
-  const board = document.createElement('div');
-  board.style.display = 'flex';
-  board.style.flexDirection = 'column';
-  board.style.alignItems = 'center';
-  board.style.justifyContent = 'center';
-  board.style.margin = '0 auto';
+class Board2 {
+  constructor() {
+    this.boardContainer = document.getElementById('plansza2-content');
+    this.numRows = 21;
+    this.numCols = 21;
+    this.squareSize = 32; // px
+    this.board = document.createElement('div');
 
-  // Find the middle tile coordinates
-  const midRow = Math.floor(numRows / 2);
-  const midCol = Math.floor(numCols / 2);
+    // Find the middle tile coordinates
+    this.midRow = Math.floor(this.numRows / 2);
+    this.midCol = Math.floor(this.numCols / 2);
 
-  for (let row = 0; row < numRows; row++) {
-    const rowDiv = document.createElement('div');
-    rowDiv.style.display = 'flex';
-    rowDiv.style.marginBottom = '0';
-    for (let col = 0; col < numCols; col++) {
-      const square = document.createElement('div');
-      square.style.width = squareSize + 'px';
-      square.style.height = squareSize + 'px';
-      square.style.border = '1px solid #bbb';
-      square.style.background = '#f4f4f4';
-      square.style.boxSizing = 'border-box';
-      square.style.display = 'inline-block';
-      square.style.position = 'relative';
-      // Mark the middle tile
-      if (row === midRow && col === midCol) {
-        square.title = 'Środek';
-        // No special background or border for the center tile
-        // Add pirate ship icon
-        const ship = document.createElement('span');
-        ship.textContent = '⛵️';
-        ship.className = 'ship-icon';
-        ship.style.position = 'absolute';
-        ship.style.left = '50%';
-        ship.style.top = '50%';
-        ship.style.transform = 'translate(-50%, -50%)';
-        ship.style.fontSize = '1.5em';
-        square.appendChild(ship);
-      }
-      rowDiv.appendChild(square);
-    }
-    board.appendChild(rowDiv);
+    // Track ship position
+    this.shipRow = this.midRow;
+    this.shipCol = this.midCol;
+
+    // Wind settings
+    this.windVectors = {
+      '↑': [-1, 0],
+      '↗': [-1, 1],
+      '→': [0, 1],
+      '↘': [1, 1],
+      '↓': [1, 0],
+      '↙': [1, -1],
+      '←': [0, -1],
+      '↖': [-1, -1],
+      '0': [0, 0], // no wind
+    };
+    this.selectedWind = '0';
+
+    this.moveInput = null;
+    this.stepInput = null;
+
+    this.init();
   }
-  boardContainer.innerHTML = '';
-  boardContainer.appendChild(board);
 
-  // Track ship position
-  let shipRow = midRow;
-  let shipCol = midCol;
+  init() {
+    if (!this.boardContainer) return;
 
-  // Helper to render the ship at the current position
-  function renderShip() {
+    this.createBoard();
+    this.createSidePanel();
+    this.setupEventListeners();
+
+    // Initial render
+    this.renderShip();
+    this.updateMovementRange();
+  }
+
+  createBoard() {
+    this.board.className = 'game-board';
+
+    for (let row = 0; row < this.numRows; row++) {
+      const rowDiv = document.createElement('div');
+      rowDiv.className = 'board-row';
+      for (let col = 0; col < this.numCols; col++) {
+        const square = document.createElement('div');
+        square.className = 'board-tile';
+        square.style.width = this.squareSize + 'px';
+        square.style.height = this.squareSize + 'px';
+
+        // Mark the middle tile
+        if (row === this.midRow && col === this.midCol) {
+          square.title = 'Środek';
+          // Add pirate ship icon
+          const ship = document.createElement('span');
+          ship.textContent = '⛵️';
+          ship.className = 'ship-icon';
+          square.appendChild(ship);
+        }
+        rowDiv.appendChild(square);
+      }
+      this.board.appendChild(rowDiv);
+    }
+    this.boardContainer.innerHTML = '';
+    this.boardContainer.appendChild(this.board);
+  }
+
+  createSidePanel() {
+    const sidePanel = document.createElement('div');
+    sidePanel.className = 'board-side-panel';
+    sidePanel.innerHTML = this.renderSidePanelTemplate();
+
+    this.boardContainer.classList.add('board-container');
+    this.boardContainer.appendChild(sidePanel);
+
+    this.moveInput = sidePanel.querySelector('#move-input');
+    this.stepInput = sidePanel.querySelector('#step-input');
+
+    // Wind button logic
+    const windBtns = sidePanel.querySelectorAll('.wind-btn');
+    windBtns.forEach(btn => {
+      if (btn.dataset.dir === '0') btn.classList.add('wind-selected');
+
+      btn.addEventListener('click', () => {
+        windBtns.forEach(b => b.classList.remove('wind-selected'));
+        btn.classList.add('wind-selected');
+        this.selectedWind = btn.dataset.dir;
+        this.updateMovementRange(); // update highlights on wind change
+      });
+    });
+  }
+
+  setupEventListeners() {
+    // Movement range update
+    this.moveInput.addEventListener('input', () => this.updateMovementRange());
+    this.stepInput.addEventListener('input', () => this.updateMovementRange());
+
+    // Ship movement
+    for (let r = 0; r < this.numRows; r++) {
+      const rowDiv = this.board.children[r];
+      if (!rowDiv) continue;
+      for (let c = 0; c < rowDiv.children.length; c++) {
+        const tile = rowDiv.children[c];
+        if (!tile) continue;
+        tile.addEventListener('click', () => {
+          this.shipRow = r;
+          this.shipCol = c;
+          this.updateMovementRange();
+        });
+      }
+    }
+  }
+
+  renderShip() {
     // Remove all ships
-    for (let r = 0; r < numRows; r++) {
-      const rowDiv = board.children[r];
+    for (let r = 0; r < this.numRows; r++) {
+      const rowDiv = this.board.children[r];
       if (!rowDiv) continue;
       for (let c = 0; c < rowDiv.children.length; c++) {
         const tile = rowDiv.children[c];
@@ -68,38 +134,25 @@ document.addEventListener('DOMContentLoaded', function () {
         // Remove any ship icon
         const ship = tile.querySelector('.ship-icon');
         if (ship) tile.removeChild(ship);
-        // Restore center tile background if needed
-        if (r === midRow && c === midCol) {
-          tile.style.background = '#f4f4f4';
-          tile.style.border = '1px solid #bbb';
-        } else {
-          tile.style.background = '#f4f4f4';
-          tile.style.border = '1px solid #bbb';
-        }
+        // Restore tile styling
+        tile.classList.remove('ship-tile');
       }
     }
     // Add ship to current position
-    const rowDiv = board.children[shipRow];
+    const rowDiv = this.board.children[this.shipRow];
     if (rowDiv) {
-      const tile = rowDiv.children[shipCol];
+      const tile = rowDiv.children[this.shipCol];
       if (tile) {
         const ship = document.createElement('span');
         ship.textContent = '⛵️';
         ship.className = 'ship-icon';
-        ship.style.position = 'absolute';
-        ship.style.left = '50%';
-        ship.style.top = '50%';
-        ship.style.transform = 'translate(-50%, -50%)';
-        ship.style.fontSize = '1.5em';
         tile.appendChild(ship);
-        tile.style.background = '#ffe082';
-        tile.style.border = '2px solid #ff9800';
+        tile.classList.add('ship-tile');
       }
     }
   }
 
-  // Helper: get adjacent tiles for regular grid (8 directions)
-  function getAdjacent(row, col) {
+  getAdjacent(row, col) {
     const adj = [];
     const dirs = [
       [-1, 0], // N
@@ -114,29 +167,14 @@ document.addEventListener('DOMContentLoaded', function () {
     for (const [dr, dc] of dirs) {
       const nr = row + dr;
       const nc = col + dc;
-      if (nr >= 0 && nr < numRows && nc >= 0 && nc < numCols) {
+      if (nr >= 0 && nr < this.numRows && nc >= 0 && nc < this.numCols) {
         adj.push([nr, nc]);
       }
     }
     return adj;
   }
 
-  // Map wind directions to movement vectors (N, NE, E, SE, S, SW, W, NW, 0)
-  const windVectors = {
-    '↑': [-1, 0],
-    '↗': [-1, 1],
-    '→': [0, 1],
-    '↘': [1, 1],
-    '↓': [1, 0],
-    '↙': [1, -1],
-    '←': [0, -1],
-    '↖': [-1, -1],
-    '0': [0, 0], // no wind
-  };
-  let selectedWind = '0';
-
-  // Helper to get direction between two tiles on a regular grid (8 directions)
-  function getDirection(fromRow, fromCol, toRow, toCol) {
+  getDirection(fromRow, fromCol, toRow, toCol) {
     const dr = toRow - fromRow;
     const dc = toCol - fromCol;
     if (dr === -1 && dc === 0) return '↑';
@@ -150,84 +188,52 @@ document.addEventListener('DOMContentLoaded', function () {
     return null;
   }
 
-  // Clear previous highlights
-  function clearMovementRange() {
-    for (let r = 0; r < numRows; r++) {
-      const rowDiv = board.children[r];
+  clearMovementRange() {
+    for (let r = 0; r < this.numRows; r++) {
+      const rowDiv = this.board.children[r];
       if (!rowDiv) continue;
       for (let c = 0; c < rowDiv.children.length; c++) {
-        rowDiv.children[c].style.boxShadow = '';
+        const tile = rowDiv.children[c];
+        tile.classList.remove('movement-range');
+        for (let s = 1; s <= 5; s++) {
+          tile.classList.remove(`step-${s}`);
+        }
       }
     }
   }
 
-  // Add side input for "Ruch" and "Wiatr"
-  const sidePanel = document.createElement('div');
-  sidePanel.style.position = 'absolute';
-  sidePanel.style.top = '32px';
-  sidePanel.style.right = '32px';
-  sidePanel.style.background = '#fff';
-  sidePanel.style.border = '1px solid #ccc';
-  sidePanel.style.borderRadius = '8px';
-  sidePanel.style.padding = '16px 20px';
-  sidePanel.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
-  sidePanel.style.display = 'flex';
-  sidePanel.style.flexDirection = 'column';
-  sidePanel.style.alignItems = 'center';
-  sidePanel.innerHTML = `
-    <label for="move-input" style="font-weight:bold; margin-bottom:6px;">Ruch</label>
-    <input id="move-input" type="number" min="0" value="2" style="width:60px; text-align:center; font-size:1.1em; margin-bottom:18px;">
-    <label for="step-input" style="font-weight:bold; margin-bottom:6px;">Kroki</label>
-    <input id="step-input" type="number" min="1" max="5" value="1" style="width:60px; text-align:center; font-size:1.1em; margin-bottom:18px;">
-    <div style="margin-bottom:6px; font-weight:bold;">Wiatr</div>
-    <div id="wind-buttons" style="display:grid; grid-template-columns:repeat(3,32px); grid-template-rows:repeat(3,32px); grid-gap:4px; margin-bottom:6px; justify-items:center; align-items:center; justify-content:center;">
-      <button type="button" class="wind-btn" data-dir="↖" title="NW" style="width:32px; height:32px; font-size:1.2em; padding:0;">↖</button>
-      <button type="button" class="wind-btn" data-dir="↑" title="N" style="width:32px; height:32px; font-size:1.2em; padding:0;">↑</button>
-      <button type="button" class="wind-btn" data-dir="↗" title="NE" style="width:32px; height:32px; font-size:1.2em; padding:0;">↗</button>
-      <button type="button" class="wind-btn" data-dir="←" title="W" style="width:32px; height:32px; font-size:1.2em; padding:0;">←</button>
-      <button type="button" class="wind-btn" data-dir="0" title="Brak wiatru" style="width:32px; height:32px; font-size:1.2em; padding:0;">•</button>
-      <button type="button" class="wind-btn" data-dir="→" title="E" style="width:32px; height:32px; font-size:1.2em; padding:0;">→</button>
-      <button type="button" class="wind-btn" data-dir="↙" title="SW" style="width:32px; height:32px; font-size:1.2em; padding:0;">↙</button>
-      <button type="button" class="wind-btn" data-dir="↓" title="S" style="width:32px; height:32px; font-size:1.2em; padding:0;">↓</button>
-      <button type="button" class="wind-btn" data-dir="↘" title="SE" style="width:32px; height:32px; font-size:1.2em; padding:0;">↘</button>
-    </div>
-  `;
-
-  // Initial movement range
-  const moveInput = sidePanel.querySelector('#move-input');
-  const stepInput = sidePanel.querySelector('#step-input');
-  function updateMovementRange() {
-    clearMovementRange();
-    renderShip();
-    const moveVal = parseFloat(moveInput.value);
-    const stepVal = parseInt(stepInput.value);
+  updateMovementRange() {
+    this.clearMovementRange();
+    this.renderShip();
+    const moveVal = parseFloat(this.moveInput.value);
+    const stepVal = parseInt(this.stepInput.value);
     if (isNaN(moveVal) || moveVal <= 0 || isNaN(stepVal) || stepVal <= 0) return;
 
     // For each step, calculate reachable tiles with wind and diagonal cost
     const greenShades = ['#a5d6a7', '#66bb6a', '#43a047', '#2e7d32', '#1b5e20'];
     // Track which step each tile is first reached at
-    const stepReached = Array.from({ length: numRows }, () => Array(numCols).fill(0));
+    const stepReached = Array.from({ length: this.numRows }, () => Array(this.numCols).fill(0));
     for (let s = 1; s <= stepVal; s++) {
       // Dijkstra for this step
-      const costs = Array.from({ length: numRows }, () => Array(numCols).fill(Infinity));
+      const costs = Array.from({ length: this.numRows }, () => Array(this.numCols).fill(Infinity));
       const queue = [];
-      queue.push({ row: shipRow, col: shipCol, cost: 0 });
-      costs[shipRow][shipCol] = 0;
+      queue.push({ row: this.shipRow, col: this.shipCol, cost: 0 });
+      costs[this.shipRow][this.shipCol] = 0;
       while (queue.length > 0) {
         const { row, col, cost } = queue.shift();
-        const adj = getAdjacent(row, col);
+        const adj = this.getAdjacent(row, col);
         for (const [nr, nc] of adj) {
           const dr = nr - row;
           const dc = nc - col;
           let moveCost = (Math.abs(dr) === 1 && Math.abs(dc) === 1) ? 1.5 : 1;
           // Wind logic: cheaper in wind dir, more expensive in opposite
-          if (selectedWind !== '0') {
-            const dir = getDirection(row, col, nr, nc);
-            if (dir === selectedWind) moveCost *= 0.5;
+          if (this.selectedWind !== '0') {
+            const dir = this.getDirection(row, col, nr, nc);
+            if (dir === this.selectedWind) moveCost *= 0.5;
             else {
               // Opposite direction
               const windOrder = ['↑', '↗', '→', '↘', '↓', '↙', '←', '↖'];
-              const oppDir = windOrder[(windOrder.indexOf(selectedWind) + 4) % 8];
+              const oppDir = windOrder[(windOrder.indexOf(this.selectedWind) + 4) % 8];
               if (dir === oppDir) moveCost *= 2;
             }
           }
@@ -236,7 +242,7 @@ document.addEventListener('DOMContentLoaded', function () {
             costs[nr][nc] = newCost;
             queue.push({ row: nr, col: nc, cost: newCost });
             // Mark the first step this tile is reached at
-            if (stepReached[nr][nc] === 0 && !(nr === shipRow && nc === shipCol)) {
+            if (stepReached[nr][nc] === 0 && !(nr === this.shipRow && nc === this.shipCol)) {
               stepReached[nr][nc] = s;
             }
           }
@@ -244,70 +250,41 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
     // Highlight all reachable tiles for each step except the ship's current position
-    for (let r = 0; r < numRows; r++) {
-      for (let c = 0; c < numCols; c++) {
+    for (let r = 0; r < this.numRows; r++) {
+      for (let c = 0; c < this.numCols; c++) {
         const s = stepReached[r][c];
         if (s > 0) {
-          const tile = board.children[r].children[c];
-          const idx = Math.min(s - 1, greenShades.length - 1);
-          tile.style.boxShadow = `0 0 0 3px ${greenShades[idx]} inset`;
+          const tile = this.board.children[r].children[c];
+          tile.classList.add('movement-range');
+          tile.classList.add(`step-${s}`);
         }
       }
     }
   }
 
-  moveInput.addEventListener('input', updateMovementRange);
-  stepInput.addEventListener('input', updateMovementRange);
-  updateMovementRange();
-
-  // Only add to board tab
-  if (boardContainer) {
-    boardContainer.style.position = 'relative';
-    boardContainer.appendChild(sidePanel);
+  renderSidePanelTemplate() {
+    return `
+      <label for="move-input" class="board-input-label">Ruch</label>
+      <input id="move-input" type="number" min="0" value="2" class="board-input">
+      <label for="step-input" class="board-input-label">Kroki</label>
+      <input id="step-input" type="number" min="1" max="5" value="1" class="board-input">
+      <div class="wind-label">Wiatr</div>
+      <div id="wind-buttons" class="wind-button-grid">
+        <button type="button" class="wind-btn" data-dir="↖" title="NW">↖</button>
+        <button type="button" class="wind-btn" data-dir="↑" title="N">↑</button>
+        <button type="button" class="wind-btn" data-dir="↗" title="NE">↗</button>
+        <button type="button" class="wind-btn" data-dir="←" title="W">←</button>
+        <button type="button" class="wind-btn" data-dir="0" title="Brak wiatru">•</button>
+        <button type="button" class="wind-btn" data-dir="→" title="E">→</button>
+        <button type="button" class="wind-btn" data-dir="↙" title="SW">↙</button>
+        <button type="button" class="wind-btn" data-dir="↓" title="S">↓</button>
+        <button type="button" class="wind-btn" data-dir="↘" title="SE">↘</button>
+      </div>
+    `;
   }
-  // Wind button logic
-  const windBtns = sidePanel.querySelectorAll('.wind-btn');
+}
 
-  windBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      windBtns.forEach(b => b.style.background = '');
-      btn.style.background = '#ffe082';
-      selectedWind = btn.dataset.dir;
-      updateMovementRange(); // update highlights on wind change
-    });
-  });
-  // Set default wind to 'no wind'
-  windBtns.forEach(btn => {
-    if (btn.dataset.dir === '0') btn.style.background = '#ffe082';
-  });
-
-  // Add click handler to move ship
-  for (let r = 0; r < numRows; r++) {
-    const rowDiv = board.children[r];
-    if (!rowDiv) continue;
-    for (let c = 0; c < rowDiv.children.length; c++) {
-      const tile = rowDiv.children[c];
-      if (!tile) continue;
-      tile.addEventListener('click', function () {
-        // Remove ship from previous position
-        const prevRowDiv = board.children[shipRow];
-        if (prevRowDiv) {
-          const prevTile = prevRowDiv.children[shipCol];
-          if (prevTile) {
-            const prevShip = prevTile.querySelector('.ship-icon');
-            if (prevShip) prevTile.removeChild(prevShip);
-          }
-        }
-        shipRow = r;
-        shipCol = c;
-        updateMovementRange();
-      });
-    }
-  }
-
-  // Initial render
-  renderShip();
-  moveInput.addEventListener('input', updateMovementRange);
-  stepInput.addEventListener('input', updateMovementRange);
-  updateMovementRange();
+// Initialize the board when the DOM is loaded
+document.addEventListener('DOMContentLoaded', function () {
+  new Board2();
 });

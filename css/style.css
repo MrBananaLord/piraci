@@ -1,0 +1,251 @@
+/* Main styles for the Piraci app */
+
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  margin-top: 50px;
+}
+
+button {
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.card {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px;
+  background-color: #f9f9f9;
+}
+
+#current-event .card {
+  background-color: #e0f7fa;
+}
+
+#event-deck {
+  border: 1px solid #ccc;
+  width: 500px;
+  padding-bottom: 20px;
+  flex: auto;
+}
+
+#config {
+  border: 1px solid #ccc;
+  margin-left: 20px;
+  padding: 0 20px;
+}
+
+#main {
+  display: flex;
+}
+
+#resources-config {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.resource-config-item {
+  border: 1px solid #eee;
+  margin: 10px 0;
+  padding: 8px;
+  border-radius: 4px;
+  background: #fafbfc;
+  text-align: left;
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.resource-config-item strong {
+  font-size: 1.08em;
+}
+
+.resource-config-item input[type="number"],
+.resource-cost-input,
+.resource-weight-input {
+  margin: 0 2px;
+  padding: 2px 4px;
+  border-radius: 3px;
+  border: 1px solid #ccc;
+  width: 48px;
+}
+
+.resource-cost-input {
+  width: 50px;
+}
+
+.resource-weight-input {
+  width: 40px;
+}
+
+.resource-config-item div {
+  margin-right: 8px;
+}
+
+.tab-btn {
+  padding: 12px 32px;
+  margin: 0 8px 0;
+  font-size: 1.1em;
+  border-radius: 6px 6px 0 0;
+  border: 1px solid #ccc;
+  border-bottom: none;
+  background: #f5f5f5;
+  transition: background 0.2s;
+}
+
+.tab-btn[aria-selected="true"] {
+  background: #fff;
+  font-weight: bold;
+  border-bottom: 2px solid #fff;
+}
+
+#tab-content {
+  border: 1px solid #ccc;
+  border-radius: 0 0 8px 8px;
+  background: #fff;
+  max-width: 1100px;
+  margin: 0 auto 32px auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  padding: 16px;
+}
+
+#tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: -1px;
+}
+
+/* Ship icon styling */
+.ship-icon {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5em;
+}
+
+/* Board UI Components */
+.board-input-label {
+  font-weight: bold;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.board-input {
+  width: 60px;
+  text-align: center;
+  font-size: 1.1em;
+  margin-bottom: 18px;
+}
+
+.wind-label {
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+
+.wind-button-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 32px);
+  grid-template-rows: repeat(3, 32px);
+  grid-gap: 4px;
+  margin-bottom: 6px;
+  justify-items: center;
+  align-items: center;
+  justify-content: center;
+}
+
+.wind-btn {
+  width: 32px;
+  height: 32px;
+  font-size: 1.2em;
+  padding: 0;
+  transition: background 0.2s;
+}
+
+.wind-selected {
+  background: #ffe082 !important;
+}
+
+/* Board Container and Side Panel */
+.board-container {
+  position: relative;
+}
+
+.board-side-panel {
+  position: absolute;
+  top: 32px;
+  right: 32px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 16px 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Game board styling */
+.game-board {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.board-row {
+  display: flex;
+  margin-bottom: 0;
+}
+
+.board-tile {
+  border: 1px solid #bbb;
+  background: #f4f4f4;
+  box-sizing: border-box;
+  display: inline-block;
+  position: relative;
+}
+
+/* Ship tile styling */
+.ship-tile {
+  background: #ffe082 !important;
+  border: 2px solid #ff9800 !important;
+}
+
+/* Movement range indicators */
+.movement-range {
+  position: relative;
+}
+
+.movement-range::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.step-1.movement-range::after {
+  box-shadow: 0 0 0 3px #a5d6a7 inset;
+}
+
+.step-2.movement-range::after {
+  box-shadow: 0 0 0 3px #66bb6a inset;
+}
+
+.step-3.movement-range::after {
+  box-shadow: 0 0 0 3px #43a047 inset;
+}
+
+.step-4.movement-range::after {
+  box-shadow: 0 0 0 3px #2e7d32 inset;
+}
+
+.step-5.movement-range::after {
+  box-shadow: 0 0 0 3px #1b5e20 inset;
+}
