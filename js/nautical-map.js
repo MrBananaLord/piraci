@@ -1,10 +1,12 @@
 // Rhumb Lines Map Generator
 class RhumbLinesMap {
   constructor(canvasId) {
+    console.log('RhumbLinesMap constructor called with canvasId:', canvasId);
     this.canvas = document.getElementById(canvasId);
     this.ctx = this.canvas.getContext('2d');
     this.width = this.canvas.width;
     this.height = this.canvas.height;
+    console.log('Canvas dimensions:', this.width, 'x', this.height);
 
     this.init();
   }
@@ -19,7 +21,7 @@ class RhumbLinesMap {
     this.clearCanvas();
     this.drawBackground();
     this.drawCompassRose();
-    this.drawRhumbLines();
+    this.drawRhumbLinesFromPoints();
     this.drawCardinalDirections();
     console.log('About to call drawIntersectionPoints');
     this.drawIntersectionPoints();
@@ -79,7 +81,7 @@ class RhumbLinesMap {
     this.ctx.fill();
   }
 
-  drawRhumbLines() {
+  drawRhumbLinesFromPoints() {
     const centerX = this.width / 2;
     const centerY = this.height / 2;
     const maxRadius = Math.min(this.width, this.height) / 2 - 50;
@@ -294,15 +296,6 @@ class RhumbLinesMap {
   drawIntersectionPoints() {
     console.log('drawIntersectionPoints called');
 
-    // Simple test circle that should definitely be visible
-    this.ctx.fillStyle = '#FF0000';
-    this.ctx.strokeStyle = '#000000';
-    this.ctx.lineWidth = 5;
-    this.ctx.beginPath();
-    this.ctx.arc(100, 100, 30, 0, 2 * Math.PI);
-    this.ctx.fill();
-    this.ctx.stroke();
-
     const centerX = this.width / 2;
     const centerY = this.height / 2;
     const maxRadius = Math.min(this.width, this.height) / 2 - 50;
@@ -400,12 +393,6 @@ class RhumbLinesMap {
     this.ctx.strokeStyle = '#8B0000';
     this.ctx.lineWidth = 5;
 
-    // Test circle in the center
-    this.ctx.beginPath();
-    this.ctx.arc(this.width / 2, this.height / 2, 20, 0, 2 * Math.PI);
-    this.ctx.fill();
-    this.ctx.stroke();
-
     console.log('Total intersections found:', intersections.length);
     console.log('Grouped intersections:', groupedIntersections);
 
@@ -487,8 +474,14 @@ class RhumbLinesMap {
 
 // Initialize rhumb lines map when DOM is loaded
 document.addEventListener('DOMContentLoaded', function () {
+  console.log('Nautical map DOM loaded');
   const mapCanvas = document.getElementById('nautical-map-canvas');
+  console.log('Map canvas element:', mapCanvas);
   if (mapCanvas) {
+    console.log('Creating RhumbLinesMap...');
     const rhumbLinesMap = new RhumbLinesMap('nautical-map-canvas');
+    console.log('RhumbLinesMap created successfully');
+  } else {
+    console.error('nautical-map-canvas not found!');
   }
 }); 
