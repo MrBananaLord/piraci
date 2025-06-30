@@ -457,27 +457,38 @@ class RhumbLinesMap {
       lines.push({ x1: swX, y1: swY, x2: endX, y2: endY });
     }
 
-    // Find intersections
+    // Find intersections with line tracking
     const intersections = [];
-    const threshold = 8; // Reasonable threshold to group nearby intersection points
+    const threshold = 8;
 
     for (let i = 0; i < lines.length; i++) {
       for (let j = i + 1; j < lines.length; j++) {
         const intersection = this.getLineIntersection(lines[i], lines[j]);
         if (intersection) {
-          intersections.push(intersection);
+          intersections.push({
+            x: intersection.x,
+            y: intersection.y,
+            line1: i,
+            line2: j
+          });
         }
       }
     }
 
-    // Group nearby intersections
+    // Group nearby intersections and count unique lines
     const groupedIntersections = [];
     for (const point of intersections) {
       let added = false;
       for (const group of groupedIntersections) {
         const distance = Math.sqrt((point.x - group.x) ** 2 + (point.y - group.y) ** 2);
         if (distance < threshold) {
-          group.count++;
+          // Add unique lines to this group
+          if (!group.lines.includes(point.line1)) {
+            group.lines.push(point.line1);
+          }
+          if (!group.lines.includes(point.line2)) {
+            group.lines.push(point.line2);
+          }
           group.x = (group.x + point.x) / 2; // Average position
           group.y = (group.y + point.y) / 2;
           added = true;
@@ -485,11 +496,15 @@ class RhumbLinesMap {
         }
       }
       if (!added) {
-        groupedIntersections.push({ x: point.x, y: point.y, count: 1 });
+        groupedIntersections.push({
+          x: point.x,
+          y: point.y,
+          lines: [point.line1, point.line2]
+        });
       }
     }
 
-    // Draw red circles for intersections with 3 or more lines
+    // Draw red circles for intersections with 3 or more unique lines
     this.ctx.fillStyle = '#FF0000';
     this.ctx.strokeStyle = '#8B0000';
     this.ctx.lineWidth = 3;
@@ -498,8 +513,8 @@ class RhumbLinesMap {
     console.log('Grouped intersections:', groupedIntersections);
 
     groupedIntersections.forEach(group => {
-      if (group.count >= 3) {
-        console.log('Drawing circle at:', group.x, group.y, 'with count:', group.count);
+      if (group.lines.length >= 3) {
+        console.log('Drawing circle at:', group.x, group.y, 'with', group.lines.length, 'unique lines');
         this.ctx.beginPath();
         this.ctx.arc(group.x, group.y, 12, 0, 2 * Math.PI);
         this.ctx.fill();
