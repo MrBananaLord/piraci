@@ -6,8 +6,14 @@ class TabManager {
     this.wydarzeniaSection = document.getElementById('wydarzenia-section');
     this.mapaSection = document.getElementById('mapa-section');
 
-    // Restore last selected tab from localStorage
-    this.lastTab = localStorage.getItem('selectedTab') || 'wydarzenia';
+    // Clear any old tab values from localStorage and default to wydarzenia
+    const lastTab = localStorage.getItem('selectedTab');
+    if (lastTab && !document.getElementById('tab-' + lastTab)) {
+      localStorage.removeItem('selectedTab');
+      this.lastTab = 'wydarzenia';
+    } else {
+      this.lastTab = lastTab || 'wydarzenia';
+    }
 
     this.init();
   }
@@ -23,6 +29,13 @@ class TabManager {
   }
 
   selectTab(tab) {
+    // Check if the tab exists before trying to select it
+    const tabElement = document.getElementById('tab-' + tab);
+    if (!tabElement) {
+      console.warn('Tab not found:', tab, '- defaulting to wydarzenia');
+      tab = 'wydarzenia';
+    }
+
     this.tabBtns.forEach(b => b.setAttribute('aria-selected', 'false'));
     document.getElementById('tab-' + tab).setAttribute('aria-selected', 'true');
 
