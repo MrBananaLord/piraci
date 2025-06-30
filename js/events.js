@@ -101,9 +101,13 @@ class Island {
   }
 
   renderTemplate() {
+    const specialMessage = this.rewards.includes('Rum')
+      ? '<p>Wpłynąłeś na suchego przestwór oceanu. Nurzasz się w rumowość</p>'
+      : '<p>Odkryłeś wyspę! Możesz znaleźć zasoby na brzegu.</p>';
+
     return `
       <h3>${this.name}</h3>
-      <p>Odkryłeś wyspę! Możesz znaleźć zasoby na brzegu.</p>
+      ${specialMessage}
       <h4>Znalezione zasoby</h4> 
       <p>${this.rewards.join(", ")}</p>
     `;
