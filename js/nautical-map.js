@@ -255,12 +255,6 @@ class RhumbLinesMap {
       this.ctx.fillText(dir.text, x, y + 5);
     });
 
-    // Draw center point
-    this.ctx.fillStyle = '#E74C3C';
-    this.ctx.beginPath();
-    this.ctx.arc(centerX, centerY, 6, 0, 2 * Math.PI);
-    this.ctx.fill();
-
     // Draw center label
     this.ctx.fillStyle = '#2C3E50';
     this.ctx.font = 'bold 12px Arial';
@@ -268,18 +262,26 @@ class RhumbLinesMap {
 
     // Draw additional source points
     const sourcePoints = [
-      { x: centerX, y: centerY - maxRadius, color: '#E74C3C', label: 'N' },
-      { x: centerX, y: centerY + maxRadius, color: '#27AE60', label: 'S' },
-      { x: centerX + maxRadius, y: centerY, color: '#F39C12', label: 'E' },
-      { x: centerX - maxRadius, y: centerY, color: '#9B59B6', label: 'W' }
+      { x: centerX, y: centerY - maxRadius, color: '#FF0000', label: 'N' },
+      { x: centerX, y: centerY + maxRadius, color: '#FF0000', label: 'S' },
+      { x: centerX + maxRadius, y: centerY, color: '#FF0000', label: 'E' },
+      { x: centerX - maxRadius, y: centerY, color: '#FF0000', label: 'W' },
+      { x: centerX + maxRadius * 0.707, y: centerY - maxRadius * 0.707, color: '#FF0000', label: 'NE' },
+      { x: centerX - maxRadius * 0.707, y: centerY - maxRadius * 0.707, color: '#FF0000', label: 'NW' },
+      { x: centerX + maxRadius * 0.707, y: centerY + maxRadius * 0.707, color: '#FF0000', label: 'SE' },
+      { x: centerX - maxRadius * 0.707, y: centerY + maxRadius * 0.707, color: '#FF0000', label: 'SW' },
+      { x: centerX, y: centerY, color: '#FF0000', label: 'CENTER' }
     ];
 
     sourcePoints.forEach(point => {
-      // Draw source point
+      // Draw source point - all same size red circles
       this.ctx.fillStyle = point.color;
+      this.ctx.strokeStyle = '#8B0000';
+      this.ctx.lineWidth = 2;
       this.ctx.beginPath();
-      this.ctx.arc(point.x, point.y, 4, 0, 2 * Math.PI);
+      this.ctx.arc(point.x, point.y, 8, 0, 2 * Math.PI);
       this.ctx.fill();
+      this.ctx.stroke();
 
       // Draw source label
       this.ctx.fillStyle = '#2C3E50';
@@ -351,7 +353,7 @@ class RhumbLinesMap {
 
     // Find intersections
     const intersections = [];
-    const threshold = 25; // Distance threshold for considering points "nearby"
+    const threshold = 10; // Smaller distance threshold for considering points "nearby"
 
     for (let i = 0; i < lines.length; i++) {
       for (let j = i + 1; j < lines.length; j++) {
@@ -381,15 +383,15 @@ class RhumbLinesMap {
       }
     }
 
-    // Draw red circles for intersections with 2+ lines
+    // Draw red circles for intersections with exactly 3 lines
     this.ctx.fillStyle = '#FF0000';
     this.ctx.strokeStyle = '#8B0000';
-    this.ctx.lineWidth = 5;
+    this.ctx.lineWidth = 2;
 
     groupedIntersections.forEach(group => {
-      if (group.count >= 2) {
+      if (group.count === 3) {
         this.ctx.beginPath();
-        this.ctx.arc(group.x, group.y, 20, 0, 2 * Math.PI);
+        this.ctx.arc(group.x, group.y, 8, 0, 2 * Math.PI);
         this.ctx.fill();
         this.ctx.stroke();
       }
