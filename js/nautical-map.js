@@ -472,7 +472,7 @@ class RhumbLinesMap {
 
     // Find intersections
     const intersections = [];
-    const threshold = 10; // Smaller distance threshold for considering points "nearby"
+    const threshold = 15; // Larger threshold to group more nearby points
 
     for (let i = 0; i < lines.length; i++) {
       for (let j = i + 1; j < lines.length; j++) {
@@ -502,7 +502,7 @@ class RhumbLinesMap {
       }
     }
 
-    // Draw red circles for intersections with exactly 3 lines
+    // Draw red circles for intersections with 3 or more lines
     this.ctx.fillStyle = '#FF0000';
     this.ctx.strokeStyle = '#8B0000';
     this.ctx.lineWidth = 3;
@@ -511,7 +511,7 @@ class RhumbLinesMap {
     console.log('Grouped intersections:', groupedIntersections);
 
     groupedIntersections.forEach(group => {
-      if (group.count === 3) {
+      if (group.count >= 3) {
         console.log('Drawing circle at:', group.x, group.y, 'with count:', group.count);
         this.ctx.beginPath();
         this.ctx.arc(group.x, group.y, 12, 0, 2 * Math.PI);
