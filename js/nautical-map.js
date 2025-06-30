@@ -18,7 +18,6 @@ class RhumbLinesMap {
     console.log('Starting to draw rhumb lines map...');
     this.clearCanvas();
     this.drawBackground();
-    this.drawCompassRose();
     this.drawAllRhumbLines();
     this.drawCardinalDirections();
     this.drawIntersectionPoints();
@@ -233,19 +232,7 @@ class RhumbLinesMap {
       this.ctx.stroke();
     }
 
-    // Draw concentric circles for distance reference
-    this.ctx.strokeStyle = '#BDC3C7';
-    this.ctx.lineWidth = 1;
-    this.ctx.setLineDash([5, 5]);
 
-    for (let i = 1; i <= 5; i++) {
-      const radius = (maxRadius / 5) * i;
-      this.ctx.beginPath();
-      this.ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-      this.ctx.stroke();
-    }
-
-    this.ctx.setLineDash([]); // Reset line dash
   }
 
   clearCanvas() {
@@ -472,7 +459,7 @@ class RhumbLinesMap {
 
     // Find intersections
     const intersections = [];
-    const threshold = 15; // Larger threshold to group more nearby points
+    const threshold = 8; // Reasonable threshold to group nearby intersection points
 
     for (let i = 0; i < lines.length; i++) {
       for (let j = i + 1; j < lines.length; j++) {
