@@ -4,8 +4,6 @@ class TabManager {
   constructor() {
     this.tabBtns = document.querySelectorAll('.tab-btn');
     this.wydarzeniaSection = document.getElementById('wydarzenia-section');
-    this.planszaSection = document.getElementById('plansza-section');
-    this.plansza2Section = document.getElementById('plansza2-section');
     this.mapaSection = document.getElementById('mapa-section');
 
     // Restore last selected tab from localStorage
@@ -30,23 +28,9 @@ class TabManager {
 
     if (tab === 'wydarzenia') {
       this.wydarzeniaSection.style.display = '';
-      this.planszaSection.style.display = 'none';
-      this.plansza2Section.style.display = 'none';
-      this.mapaSection.style.display = 'none';
-    } else if (tab === 'plansza') {
-      this.wydarzeniaSection.style.display = 'none';
-      this.planszaSection.style.display = '';
-      this.plansza2Section.style.display = 'none';
-      this.mapaSection.style.display = 'none';
-    } else if (tab === 'plansza2') {
-      this.wydarzeniaSection.style.display = 'none';
-      this.planszaSection.style.display = 'none';
-      this.plansza2Section.style.display = '';
       this.mapaSection.style.display = 'none';
     } else if (tab === 'mapa') {
       this.wydarzeniaSection.style.display = 'none';
-      this.planszaSection.style.display = 'none';
-      this.plansza2Section.style.display = 'none';
       this.mapaSection.style.display = '';
     }
 
