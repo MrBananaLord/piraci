@@ -32,7 +32,6 @@ class TabManager {
     // Check if the tab exists before trying to select it
     const tabElement = document.getElementById('tab-' + tab);
     if (!tabElement) {
-      console.warn('Tab not found:', tab, '- defaulting to wydarzenia');
       tab = 'wydarzenia';
     }
 
@@ -63,9 +62,7 @@ class ResourceChancesManager {
 
   renderResourceChances() {
     const chancesDisplay = document.getElementById('chances-display');
-    console.log('chancesDisplay element:', chancesDisplay);
     if (!chancesDisplay) {
-      console.error('chances-display element not found!');
       return;
     }
 
@@ -77,9 +74,6 @@ class ResourceChancesManager {
         totalWeights[level] += r.weight[level];
       });
     });
-
-    console.log('Total weights:', totalWeights);
-    console.log('Config resources:', this.config.resources);
 
     let html = '';
 
@@ -128,9 +122,7 @@ class ResourceChancesManager {
       `;
     });
 
-    console.log('Generated HTML:', html);
     chancesDisplay.innerHTML = html;
-    console.log('HTML set to chancesDisplay');
   }
 }
 
@@ -166,12 +158,7 @@ class EventManager {
 
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', function () {
-  console.log('DOM loaded, initializing application...');
   const tabManager = new TabManager();
-  console.log('TabManager created');
   const resourceChancesManager = new ResourceChancesManager(config);
-  console.log('ResourceChancesManager created');
   const eventManager = new EventManager();
-  console.log('EventManager created');
-  console.log('Application initialization complete');
 });
