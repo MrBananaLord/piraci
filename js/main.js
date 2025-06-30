@@ -5,6 +5,7 @@ class TabManager {
     this.tabBtns = document.querySelectorAll('.tab-btn');
     this.wydarzeniaSection = document.getElementById('wydarzenia-section');
     this.mapaSection = document.getElementById('mapa-section');
+    this.mapInitialized = false;
 
     // Clear any old tab values from localStorage and default to wydarzenia
     const lastTab = localStorage.getItem('selectedTab');
@@ -44,6 +45,19 @@ class TabManager {
     } else if (tab === 'mapa') {
       this.wydarzeniaSection.style.display = 'none';
       this.mapaSection.style.display = '';
+
+      // Initialize map if not already done
+      if (!this.mapInitialized) {
+        console.log('Initializing nautical map...');
+        const mapCanvas = document.getElementById('nautical-map-canvas');
+        if (mapCanvas) {
+          this.rhumbLinesMap = new RhumbLinesMap('nautical-map-canvas');
+          this.mapInitialized = true;
+          console.log('Nautical map initialized');
+        } else {
+          console.error('Map canvas not found');
+        }
+      }
     }
 
     localStorage.setItem('selectedTab', tab);

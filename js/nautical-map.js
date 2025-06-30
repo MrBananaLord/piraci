@@ -15,71 +15,20 @@ class RhumbLinesMap {
   }
 
   drawRhumbLines() {
+    console.log('Starting to draw rhumb lines map...');
     this.clearCanvas();
     this.drawBackground();
     this.drawCompassRose();
-    this.drawRhumbLinesFromPoints();
+    this.drawAllRhumbLines();
     this.drawCardinalDirections();
     this.drawIntersectionPoints();
+    console.log('Finished drawing rhumb lines map');
   }
 
-  clearCanvas() {
-    this.ctx.clearRect(0, 0, this.width, this.height);
-  }
-
-  drawBackground() {
-    // Simple light blue background
-    this.ctx.fillStyle = '#E6F3FF';
-    this.ctx.fillRect(0, 0, this.width, this.height);
-  }
-
-  drawCompassRose() {
-    const x = this.width - 80;
-    const y = 80;
-    const radius = 40;
-
-    // Draw compass rose
-    this.ctx.strokeStyle = '#2C3E50';
-    this.ctx.lineWidth = 2;
-    this.ctx.fillStyle = '#FFFFFF';
-
-    // Outer circle
-    this.ctx.beginPath();
-    this.ctx.arc(x, y, radius, 0, 2 * Math.PI);
-    this.ctx.fill();
-    this.ctx.stroke();
-
-    // Inner circle
-    this.ctx.beginPath();
-    this.ctx.arc(x, y, radius * 0.6, 0, 2 * Math.PI);
-    this.ctx.stroke();
-
-    // Cardinal directions
-    const directions = ['N', 'E', 'S', 'W'];
-    const angles = [0, Math.PI / 2, Math.PI, 3 * Math.PI / 2];
-
-    directions.forEach((dir, i) => {
-      const angle = angles[i];
-      const textX = x + Math.cos(angle) * (radius - 15);
-      const textY = y + Math.sin(angle) * (radius - 15);
-
-      this.ctx.fillStyle = '#2C3E50';
-      this.ctx.font = 'bold 16px Arial';
-      this.ctx.textAlign = 'center';
-      this.ctx.fillText(dir, textX, textY + 5);
-    });
-
-    // Center point
-    this.ctx.fillStyle = '#2C3E50';
-    this.ctx.beginPath();
-    this.ctx.arc(x, y, 4, 0, 2 * Math.PI);
-    this.ctx.fill();
-  }
-
-  drawRhumbLinesFromPoints() {
+  drawAllRhumbLines() {
     const centerX = this.width / 2;
     const centerY = this.height / 2;
-    const maxRadius = Math.min(this.width, this.height) / 2 - 50;
+    const maxRadius = Math.min(this.width, this.height) / 2.5 - 5;
 
     // Function to calculate distance to canvas edge
     const getDistanceToEdge = (startX, startY, angle) => {
@@ -212,6 +161,78 @@ class RhumbLinesMap {
       this.ctx.stroke();
     }
 
+    // Draw additional rhumb lines from NE point
+    this.ctx.strokeStyle = '#000000';
+    this.ctx.lineWidth = 1;
+    const neX = centerX + maxRadius * 0.707;
+    const neY = centerY - maxRadius * 0.707;
+
+    for (let i = 0; i < 16; i++) {
+      const angle = (i * Math.PI) / 8;
+      const distance = getDistanceToEdge(neX, neY, angle);
+      const endX = neX + Math.cos(angle) * distance;
+      const endY = neY + Math.sin(angle) * distance;
+
+      this.ctx.beginPath();
+      this.ctx.moveTo(neX, neY);
+      this.ctx.lineTo(endX, endY);
+      this.ctx.stroke();
+    }
+
+    // Draw additional rhumb lines from NW point
+    this.ctx.strokeStyle = '#000000';
+    this.ctx.lineWidth = 1;
+    const nwX = centerX - maxRadius * 0.707;
+    const nwY = centerY - maxRadius * 0.707;
+
+    for (let i = 0; i < 16; i++) {
+      const angle = (i * Math.PI) / 8;
+      const distance = getDistanceToEdge(nwX, nwY, angle);
+      const endX = nwX + Math.cos(angle) * distance;
+      const endY = nwY + Math.sin(angle) * distance;
+
+      this.ctx.beginPath();
+      this.ctx.moveTo(nwX, nwY);
+      this.ctx.lineTo(endX, endY);
+      this.ctx.stroke();
+    }
+
+    // Draw additional rhumb lines from SE point
+    this.ctx.strokeStyle = '#000000';
+    this.ctx.lineWidth = 1;
+    const seX = centerX + maxRadius * 0.707;
+    const seY = centerY + maxRadius * 0.707;
+
+    for (let i = 0; i < 16; i++) {
+      const angle = (i * Math.PI) / 8;
+      const distance = getDistanceToEdge(seX, seY, angle);
+      const endX = seX + Math.cos(angle) * distance;
+      const endY = seY + Math.sin(angle) * distance;
+
+      this.ctx.beginPath();
+      this.ctx.moveTo(seX, seY);
+      this.ctx.lineTo(endX, endY);
+      this.ctx.stroke();
+    }
+
+    // Draw additional rhumb lines from SW point
+    this.ctx.strokeStyle = '#000000';
+    this.ctx.lineWidth = 1;
+    const swX = centerX - maxRadius * 0.707;
+    const swY = centerY + maxRadius * 0.707;
+
+    for (let i = 0; i < 16; i++) {
+      const angle = (i * Math.PI) / 8;
+      const distance = getDistanceToEdge(swX, swY, angle);
+      const endX = swX + Math.cos(angle) * distance;
+      const endY = swY + Math.sin(angle) * distance;
+
+      this.ctx.beginPath();
+      this.ctx.moveTo(swX, swY);
+      this.ctx.lineTo(endX, endY);
+      this.ctx.stroke();
+    }
+
     // Draw concentric circles for distance reference
     this.ctx.strokeStyle = '#BDC3C7';
     this.ctx.lineWidth = 1;
@@ -227,10 +248,63 @@ class RhumbLinesMap {
     this.ctx.setLineDash([]); // Reset line dash
   }
 
+  clearCanvas() {
+    this.ctx.clearRect(0, 0, this.width, this.height);
+  }
+
+  drawBackground() {
+    // Simple light blue background
+    this.ctx.fillStyle = '#E6F3FF';
+    this.ctx.fillRect(0, 0, this.width, this.height);
+  }
+
+  drawCompassRose() {
+    const x = this.width - 80;
+    const y = 80;
+    const radius = 40;
+
+    // Draw compass rose
+    this.ctx.strokeStyle = '#2C3E50';
+    this.ctx.lineWidth = 2;
+    this.ctx.fillStyle = '#FFFFFF';
+
+    // Outer circle
+    this.ctx.beginPath();
+    this.ctx.arc(x, y, radius, 0, 2 * Math.PI);
+    this.ctx.fill();
+    this.ctx.stroke();
+
+    // Inner circle
+    this.ctx.beginPath();
+    this.ctx.arc(x, y, radius * 0.6, 0, 2 * Math.PI);
+    this.ctx.stroke();
+
+    // Cardinal directions
+    const directions = ['N', 'E', 'S', 'W'];
+    const angles = [0, Math.PI / 2, Math.PI, 3 * Math.PI / 2];
+
+    directions.forEach((dir, i) => {
+      const angle = angles[i];
+      const textX = x + Math.cos(angle) * (radius - 15);
+      const textY = y + Math.sin(angle) * (radius - 15);
+
+      this.ctx.fillStyle = '#2C3E50';
+      this.ctx.font = 'bold 16px Arial';
+      this.ctx.textAlign = 'center';
+      this.ctx.fillText(dir, textX, textY + 5);
+    });
+
+    // Center point
+    this.ctx.fillStyle = '#2C3E50';
+    this.ctx.beginPath();
+    this.ctx.arc(x, y, 4, 0, 2 * Math.PI);
+    this.ctx.fill();
+  }
+
   drawCardinalDirections() {
     const centerX = this.width / 2;
     const centerY = this.height / 2;
-    const maxRadius = Math.min(this.width, this.height) / 2 - 50;
+    const maxRadius = Math.min(this.width, this.height) / 2.5 - 5;
 
     // Draw cardinal direction labels
     const directions = [
@@ -291,9 +365,10 @@ class RhumbLinesMap {
   }
 
   drawIntersectionPoints() {
+    console.log('Starting to draw intersection points...');
     const centerX = this.width / 2;
     const centerY = this.height / 2;
-    const maxRadius = Math.min(this.width, this.height) / 2 - 50;
+    const maxRadius = Math.min(this.width, this.height) / 2.5 - 5;
 
     // Define all line segments
     const lines = [];
@@ -351,6 +426,50 @@ class RhumbLinesMap {
       lines.push({ x1: westX, y1: westY, x2: endX, y2: endY });
     }
 
+    // Lines from NE point
+    const neX = centerX + maxRadius * 0.707;
+    const neY = centerY - maxRadius * 0.707;
+    for (let i = 0; i < 16; i++) {
+      const angle = (i * Math.PI) / 8;
+      const distance = this.getDistanceToEdge(neX, neY, angle);
+      const endX = neX + Math.cos(angle) * distance;
+      const endY = neY + Math.sin(angle) * distance;
+      lines.push({ x1: neX, y1: neY, x2: endX, y2: endY });
+    }
+
+    // Lines from NW point
+    const nwX = centerX - maxRadius * 0.707;
+    const nwY = centerY - maxRadius * 0.707;
+    for (let i = 0; i < 16; i++) {
+      const angle = (i * Math.PI) / 8;
+      const distance = this.getDistanceToEdge(nwX, nwY, angle);
+      const endX = nwX + Math.cos(angle) * distance;
+      const endY = nwY + Math.sin(angle) * distance;
+      lines.push({ x1: nwX, y1: nwY, x2: endX, y2: endY });
+    }
+
+    // Lines from SE point
+    const seX = centerX + maxRadius * 0.707;
+    const seY = centerY + maxRadius * 0.707;
+    for (let i = 0; i < 16; i++) {
+      const angle = (i * Math.PI) / 8;
+      const distance = this.getDistanceToEdge(seX, seY, angle);
+      const endX = seX + Math.cos(angle) * distance;
+      const endY = seY + Math.sin(angle) * distance;
+      lines.push({ x1: seX, y1: seY, x2: endX, y2: endY });
+    }
+
+    // Lines from SW point
+    const swX = centerX - maxRadius * 0.707;
+    const swY = centerY + maxRadius * 0.707;
+    for (let i = 0; i < 16; i++) {
+      const angle = (i * Math.PI) / 8;
+      const distance = this.getDistanceToEdge(swX, swY, angle);
+      const endX = swX + Math.cos(angle) * distance;
+      const endY = swY + Math.sin(angle) * distance;
+      lines.push({ x1: swX, y1: swY, x2: endX, y2: endY });
+    }
+
     // Find intersections
     const intersections = [];
     const threshold = 10; // Smaller distance threshold for considering points "nearby"
@@ -386,12 +505,16 @@ class RhumbLinesMap {
     // Draw red circles for intersections with exactly 3 lines
     this.ctx.fillStyle = '#FF0000';
     this.ctx.strokeStyle = '#8B0000';
-    this.ctx.lineWidth = 2;
+    this.ctx.lineWidth = 3;
+
+    console.log('Total intersections found:', intersections.length);
+    console.log('Grouped intersections:', groupedIntersections);
 
     groupedIntersections.forEach(group => {
       if (group.count === 3) {
+        console.log('Drawing circle at:', group.x, group.y, 'with count:', group.count);
         this.ctx.beginPath();
-        this.ctx.arc(group.x, group.y, 8, 0, 2 * Math.PI);
+        this.ctx.arc(group.x, group.y, 12, 0, 2 * Math.PI);
         this.ctx.fill();
         this.ctx.stroke();
       }
@@ -463,10 +586,4 @@ class RhumbLinesMap {
   }
 }
 
-// Initialize rhumb lines map when DOM is loaded
-document.addEventListener('DOMContentLoaded', function () {
-  const mapCanvas = document.getElementById('nautical-map-canvas');
-  if (mapCanvas) {
-    const rhumbLinesMap = new RhumbLinesMap('nautical-map-canvas');
-  }
-}); 
+// Map initialization is now handled by TabManager when the map tab is selected 
