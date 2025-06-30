@@ -15,11 +15,15 @@ class RhumbLinesMap {
   }
 
   drawRhumbLines() {
+    console.log('drawRhumbLines started');
     this.clearCanvas();
     this.drawBackground();
     this.drawCompassRose();
     this.drawRhumbLines();
     this.drawCardinalDirections();
+    console.log('About to call drawIntersectionPoints');
+    this.drawIntersectionPoints();
+    console.log('drawRhumbLines completed');
   }
 
   clearCanvas() {
@@ -285,6 +289,195 @@ class RhumbLinesMap {
       this.ctx.font = 'bold 10px Arial';
       this.ctx.fillText(point.label, point.x, point.y + 15);
     });
+  }
+
+  drawIntersectionPoints() {
+    console.log('drawIntersectionPoints called');
+
+    // Simple test circle that should definitely be visible
+    this.ctx.fillStyle = '#FF0000';
+    this.ctx.strokeStyle = '#000000';
+    this.ctx.lineWidth = 5;
+    this.ctx.beginPath();
+    this.ctx.arc(100, 100, 30, 0, 2 * Math.PI);
+    this.ctx.fill();
+    this.ctx.stroke();
+
+    const centerX = this.width / 2;
+    const centerY = this.height / 2;
+    const maxRadius = Math.min(this.width, this.height) / 2 - 50;
+
+    // Define all line segments
+    const lines = [];
+
+    // Lines from center
+    for (let i = 0; i < 16; i++) {
+      const angle = (i * Math.PI) / 8;
+      const distance = this.getDistanceToEdge(centerX, centerY, angle);
+      const endX = centerX + Math.cos(angle) * distance;
+      const endY = centerY + Math.sin(angle) * distance;
+      lines.push({ x1: centerX, y1: centerY, x2: endX, y2: endY });
+    }
+
+    // Lines from North point
+    const northX = centerX;
+    const northY = centerY - maxRadius;
+    for (let i = 0; i < 16; i++) {
+      const angle = (i * Math.PI) / 8;
+      const distance = this.getDistanceToEdge(northX, northY, angle);
+      const endX = northX + Math.cos(angle) * distance;
+      const endY = northY + Math.sin(angle) * distance;
+      lines.push({ x1: northX, y1: northY, x2: endX, y2: endY });
+    }
+
+    // Lines from South point
+    const southX = centerX;
+    const southY = centerY + maxRadius;
+    for (let i = 0; i < 16; i++) {
+      const angle = (i * Math.PI) / 8;
+      const distance = this.getDistanceToEdge(southX, southY, angle);
+      const endX = southX + Math.cos(angle) * distance;
+      const endY = southY + Math.sin(angle) * distance;
+      lines.push({ x1: southX, y1: southY, x2: endX, y2: endY });
+    }
+
+    // Lines from East point
+    const eastX = centerX + maxRadius;
+    const eastY = centerY;
+    for (let i = 0; i < 16; i++) {
+      const angle = (i * Math.PI) / 8;
+      const distance = this.getDistanceToEdge(eastX, eastY, angle);
+      const endX = eastX + Math.cos(angle) * distance;
+      const endY = eastY + Math.sin(angle) * distance;
+      lines.push({ x1: eastX, y1: eastY, x2: endX, y2: endY });
+    }
+
+    // Lines from West point
+    const westX = centerX - maxRadius;
+    const westY = centerY;
+    for (let i = 0; i < 16; i++) {
+      const angle = (i * Math.PI) / 8;
+      const distance = this.getDistanceToEdge(westX, westY, angle);
+      const endX = westX + Math.cos(angle) * distance;
+      const endY = westY + Math.sin(angle) * distance;
+      lines.push({ x1: westX, y1: westY, x2: endX, y2: endY });
+    }
+
+    // Find intersections
+    const intersections = [];
+    const threshold = 25; // Distance threshold for considering points "nearby"
+
+    for (let i = 0; i < lines.length; i++) {
+      for (let j = i + 1; j < lines.length; j++) {
+        const intersection = this.getLineIntersection(lines[i], lines[j]);
+        if (intersection) {
+          intersections.push(intersection);
+        }
+      }
+    }
+
+    // Group nearby intersections
+    const groupedIntersections = [];
+    for (const point of intersections) {
+      let added = false;
+      for (const group of groupedIntersections) {
+        const distance = Math.sqrt((point.x - group.x) ** 2 + (point.y - group.y) ** 2);
+        if (distance < threshold) {
+          group.count++;
+          group.x = (group.x + point.x) / 2; // Average position
+          group.y = (group.y + point.y) / 2;
+          added = true;
+          break;
+        }
+      }
+      if (!added) {
+        groupedIntersections.push({ x: point.x, y: point.y, count: 1 });
+      }
+    }
+
+    // Draw red circles for intersections with 2+ lines
+    this.ctx.fillStyle = '#FF0000';
+    this.ctx.strokeStyle = '#8B0000';
+    this.ctx.lineWidth = 5;
+
+    // Test circle in the center
+    this.ctx.beginPath();
+    this.ctx.arc(this.width / 2, this.height / 2, 20, 0, 2 * Math.PI);
+    this.ctx.fill();
+    this.ctx.stroke();
+
+    console.log('Total intersections found:', intersections.length);
+    console.log('Grouped intersections:', groupedIntersections);
+
+    groupedIntersections.forEach(group => {
+      if (group.count >= 2) {
+        console.log('Drawing circle at:', group.x, group.y, 'with count:', group.count);
+        this.ctx.beginPath();
+        this.ctx.arc(group.x, group.y, 20, 0, 2 * Math.PI);
+        this.ctx.fill();
+        this.ctx.stroke();
+      }
+    });
+  }
+
+  getLineIntersection(line1, line2) {
+    const x1 = line1.x1, y1 = line1.y1, x2 = line1.x2, y2 = line1.y2;
+    const x3 = line2.x1, y3 = line2.y1, x4 = line2.x2, y4 = line2.y2;
+
+    const denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+    if (Math.abs(denom) < 0.001) return null; // Lines are parallel
+
+    const t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / denom;
+    const u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / denom;
+
+    if (t >= 0 && t <= 1 && u >= 0 && u <= 1) {
+      const x = x1 + t * (x2 - x1);
+      const y = y1 + t * (y2 - y1);
+      return { x, y };
+    }
+
+    return null;
+  }
+
+  getDistanceToEdge(startX, startY, angle) {
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+
+    let distance = Infinity;
+
+    // Check intersection with left edge (x = 0)
+    if (cos < 0) {
+      const d = -startX / cos;
+      if (d > 0 && startY + d * sin >= 0 && startY + d * sin <= this.height) {
+        distance = Math.min(distance, d);
+      }
+    }
+
+    // Check intersection with right edge (x = this.width)
+    if (cos > 0) {
+      const d = (this.width - startX) / cos;
+      if (d > 0 && startY + d * sin >= 0 && startY + d * sin <= this.height) {
+        distance = Math.min(distance, d);
+      }
+    }
+
+    // Check intersection with top edge (y = 0)
+    if (sin < 0) {
+      const d = -startY / sin;
+      if (d > 0 && startX + d * cos >= 0 && startX + d * cos <= this.width) {
+        distance = Math.min(distance, d);
+      }
+    }
+
+    // Check intersection with bottom edge (y = this.height)
+    if (sin > 0) {
+      const d = (this.height - startY) / sin;
+      if (d > 0 && startX + d * cos >= 0 && startX + d * cos <= this.width) {
+        distance = Math.min(distance, d);
+      }
+    }
+
+    return distance;
   }
 
   setupEventListeners() {
