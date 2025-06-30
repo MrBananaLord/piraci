@@ -288,18 +288,7 @@ class RhumbLinesMap {
   }
 
   setupEventListeners() {
-    // Add click event to regenerate map
-    this.canvas.addEventListener('click', () => {
-      this.drawRhumbLines();
-    });
-
-    // Add regenerate button functionality
-    const regenerateBtn = document.getElementById('regenerate-btn');
-    if (regenerateBtn) {
-      regenerateBtn.addEventListener('click', () => {
-        this.drawRhumbLines();
-      });
-    }
+    // Map is now static - no regeneration functionality
   }
 }
 
