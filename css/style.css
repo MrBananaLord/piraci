@@ -486,6 +486,68 @@ hr {
   margin: 20px 0;
 }
 
+/* Resource Chances Display */
+#resource-chances {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  max-width: 500px;
+}
+
+.chance-level-section {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: #fafbfc;
+}
+
+.chance-level-section h3 {
+  margin: 0 0 15px 0;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.chance-resources {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chance-resource-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.resource-name {
+  font-weight: 600;
+  color: #2c3e50;
+  flex: 1;
+}
+
+.resource-chance {
+  font-weight: bold;
+  color: #3498db;
+  margin: 0 10px;
+  min-width: 50px;
+  text-align: center;
+}
+
+.resource-cost {
+  color: #7f8c8d;
+  font-size: 0.85em;
+  font-style: italic;
+}
+
 /* Nautical Map Styles */
 .map-controls {
   margin-bottom: 20px;

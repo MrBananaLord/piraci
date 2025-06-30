@@ -10,8 +10,8 @@ class ConfigData {
         cost: 8,
         weight: {
           1: 0,
-          2: 1,
-          3: 4
+          2: 0,
+          3: 16
         }
       },
       character: {
@@ -20,7 +20,7 @@ class ConfigData {
         weight: {
           1: 0,
           2: 2,
-          3: 3
+          3: 4
         }
       },
       gold: {
@@ -34,10 +34,64 @@ class ConfigData {
       },
       wood: {
         name: "Drewno",
-        cost: 2,
+        cost: 1,
         weight: {
           1: 1,
           2: 2,
+          3: 1
+        }
+      },
+      grain: {
+        name: "Zboże",
+        cost: 2,
+        weight: {
+          1: 0,
+          2: 1,
+          3: 2
+        }
+      },
+      gunpowder: {
+        name: "Proch",
+        cost: 2,
+        weight: {
+          1: 0,
+          2: 1,
+          3: 2
+        }
+      },
+      iron: {
+        name: "Żelazo",
+        cost: 2,
+        weight: {
+          1: 0,
+          2: 1,
+          3: 2
+        }
+      },
+      cotton: {
+        name: "Bawełna",
+        cost: 2,
+        weight: {
+          1: 0,
+          2: 1,
+          3: 2
+        }
+      },
+      rope: {
+        name: "Fiut",
+        cost: 1,
+        weight: {
+          1: 1,
+          2: 1,
+          3: 1
+        }
+      },
+      rum: {
+        name: "Rum",
+        cost: 1,
+        weight: {
+          1: 1,
+          2: 1,
           3: 1
         }
       }

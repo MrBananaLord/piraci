@@ -73,6 +73,7 @@ class ConfigManager {
     });
 
     this.renderResourcesConfig();
+    this.renderResourceChances();
   }
 
   renderResourcesConfig() {
@@ -101,6 +102,9 @@ class ConfigManager {
           const val = parseInt(e.target.value);
           if (!isNaN(val) && val >= 0) {
             this.config.resources[resourceKey].weight[weightLevel] = val;
+            // Re-render the entire config to update all chances
+            this.renderResourcesConfig();
+            this.renderResourceChances();
           }
         }
       });
@@ -117,6 +121,69 @@ class ConfigManager {
       <div>2: <input type="number" min="0" value="${resource.weight[2]}" data-resource="${key}" data-type="weight" data-weight="2" class="resource-weight-input"></div>
       <div>3: <input type="number" min="0" value="${resource.weight[3]}" data-resource="${key}" data-type="weight" data-weight="3" class="resource-weight-input"></div>
     `;
+  }
+
+  renderResourceChances() {
+    const chancesDisplay = document.getElementById('chances-display');
+    if (!chancesDisplay) return;
+
+    // Calculate total weights for each level
+    const totalWeights = {};
+    Object.values(this.config.resources).forEach(r => {
+      [1, 2, 3].forEach(level => {
+        if (!totalWeights[level]) totalWeights[level] = 0;
+        totalWeights[level] += r.weight[level];
+      });
+    });
+
+    let html = '';
+
+    // Create sections for each deck level
+    [1, 2, 3].forEach(level => {
+      const levelNames = ['Normalne (1)', 'Trudne (2)', 'Epickie (3)'];
+      const levelColors = ['#4caf50', '#ff9800', '#f44336'];
+
+      html += `
+        <div class="chance-level-section">
+          <h3 style="color: ${levelColors[level - 1]}">${levelNames[level - 1]}</h3>
+          <div class="chance-resources">
+      `;
+
+      // Get all resources with their chances for this level
+      const resourcesWithChances = Object.entries(this.config.resources)
+        .map(([key, resource]) => {
+          const total = totalWeights[level];
+          const chance = total > 0 ? ((resource.weight[level] / total) * 100).toFixed(1) : '0.0';
+          return {
+            name: resource.name,
+            chance: parseFloat(chance),
+            cost: resource.cost
+          };
+        })
+        .filter(resource => resource.chance > 0)
+        .sort((a, b) => b.chance - a.chance); // Sort by chance descending
+
+      if (resourcesWithChances.length > 0) {
+        resourcesWithChances.forEach(resource => {
+          html += `
+            <div class="chance-resource-item">
+              <span class="resource-name">${resource.name}</span>
+              <span class="resource-chance">${resource.chance}%</span>
+              <span class="resource-cost">(koszt: ${resource.cost})</span>
+            </div>
+          `;
+        });
+      } else {
+        html += '<div class="chance-resource-item">Brak dostępnych zasobów</div>';
+      }
+
+      html += `
+          </div>
+        </div>
+      `;
+    });
+
+    chancesDisplay.innerHTML = html;
   }
 }
 
