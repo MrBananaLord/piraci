@@ -485,3 +485,66 @@ hr {
   background: #e0e0e0;
   margin: 20px 0;
 }
+
+/* Nautical Map Styles */
+.map-controls {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.map-controls button {
+  margin: 0 10px;
+  padding: 12px 24px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.map-controls button:hover {
+  background-color: #2980b9;
+}
+
+.map-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+#nautical-map-canvas {
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  background-color: #E6F3FF;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+#nautical-map-canvas:hover {
+  border-color: #3498db;
+}
+
+.map-info {
+  text-align: center;
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  border-left: 4px solid #3498db;
+}
+
+.map-info p {
+  margin: 0;
+  color: #495057;
+  font-size: 14px;
+}
+
+.map-info strong {
+  color: #2c3e50;
+}
