@@ -87,6 +87,61 @@ class Fight {
   }
 }
 
+class Island {
+  constructor(level = 1) {
+    this.name = "Wyspa!";
+    this.level = level;
+    this.rewards = this.generateRewards();
+  }
+
+  generateRewards() {
+    const islandResources = ['Owoc', 'Rum', 'Drewno'];
+    const selectedResource = islandResources[Math.floor(Math.random() * islandResources.length)];
+    return [selectedResource];
+  }
+
+  renderTemplate() {
+    return `
+      <h3>${this.name}</h3>
+      <p>Odkryłeś wyspę! Możesz znaleźć zasoby na brzegu.</p>
+      <h4>Znalezione zasoby</h4> 
+      <p>${this.rewards.join(", ")}</p>
+    `;
+  }
+}
+
+class FloatingDebris {
+  constructor(level = 1) {
+    this.name = "Pływające śmieci";
+    this.level = level;
+    this.rewards = this.generateRewards();
+  }
+
+  generateRewards() {
+    let debrisResources;
+
+    if (this.level === 1) {
+      debrisResources = ['Owoc', 'Rum', 'Drewno'];
+    } else if (this.level === 2) {
+      debrisResources = ['Żelazo', 'Proch', 'Bawełna', 'Zboże'];
+    } else if (this.level === 3) {
+      debrisResources = ['Postać'];
+    }
+
+    const selectedResource = debrisResources[Math.floor(Math.random() * debrisResources.length)];
+    return [selectedResource];
+  }
+
+  renderTemplate() {
+    return `
+      <h3>${this.name}</h3>
+      <p>Widzisz pływające śmieci na powierzchni wody. Może znajdziesz coś użytecznego.</p>
+      <h4>Znalezione przedmioty</h4> 
+      <p>${this.rewards.join(", ")}</p>
+    `;
+  }
+}
+
 class EventSystem {
   constructor() {
     this.events = [];
@@ -113,7 +168,20 @@ class EventSystem {
 class Event {
   constructor(level = 1) {
     this.level = level;
-    this.action = new Fight(level);
+
+    // Event type probabilities:
+    // 15% chance for FloatingDebris event
+    // 15% chance for Island event  
+    // 70% chance for Fight event
+    const random = Math.random();
+    if (random < 0.15) {
+      this.action = new FloatingDebris(level);
+    } else if (random < 0.30) {
+      this.action = new Island(level);
+    } else {
+      this.action = new Fight(level);
+    }
+
     this.created = new Date();
   }
 

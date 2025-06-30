@@ -77,8 +77,8 @@ class ConfigData {
           3: 2
         }
       },
-      rope: {
-        name: "Fiut",
+      fruit: {
+        name: "Owoc",
         cost: 1,
         weight: {
           1: 1,
