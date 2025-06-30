@@ -54,73 +54,14 @@ class TabManager {
   }
 }
 
-class ConfigManager {
+class ResourceChancesManager {
   constructor(config) {
     this.config = config;
-    this.enemyScalingInput = document.getElementById('enemy-scaling-input');
-    this.resourcesConfigDiv = document.getElementById('resources-config');
-
     this.init();
   }
 
   init() {
-    this.enemyScalingInput.value = this.config.enemyScaling;
-    this.enemyScalingInput.addEventListener('input', (e) => {
-      const val = parseInt(e.target.value);
-      if (!isNaN(val) && val > 0) {
-        this.config.enemyScaling = val;
-      }
-    });
-
-    this.renderResourcesConfig();
     this.renderResourceChances();
-  }
-
-  renderResourcesConfig() {
-    this.resourcesConfigDiv.innerHTML = '';
-
-    Object.entries(this.config.resources).forEach(([key, resource]) => {
-      const resourceDiv = document.createElement('div');
-      resourceDiv.className = 'resource-config-item';
-      resourceDiv.innerHTML = this.renderResourceTemplate(key, resource);
-      this.resourcesConfigDiv.appendChild(resourceDiv);
-    });
-
-    // Add event listeners
-    this.resourcesConfigDiv.querySelectorAll('input').forEach(input => {
-      input.addEventListener('input', (e) => {
-        const resourceKey = e.target.getAttribute('data-resource');
-        const type = e.target.getAttribute('data-type');
-
-        if (type === 'cost') {
-          const val = parseInt(e.target.value);
-          if (!isNaN(val) && val >= 0) {
-            this.config.resources[resourceKey].cost = val;
-          }
-        } else if (type === 'weight') {
-          const weightLevel = e.target.getAttribute('data-weight');
-          const val = parseInt(e.target.value);
-          if (!isNaN(val) && val >= 0) {
-            this.config.resources[resourceKey].weight[weightLevel] = val;
-            // Re-render the entire config to update all chances
-            this.renderResourcesConfig();
-            this.renderResourceChances();
-          }
-        }
-      });
-    });
-  }
-
-  renderResourceTemplate(key, resource) {
-    return `
-      <strong>${resource.name}</strong><br>
-      Koszt: <input type="number" min="0" value="${resource.cost}" data-resource="${key}" data-type="cost" class="resource-cost-input">
-      <br>
-      Wagi: 
-      <div>1: <input type="number" min="0" value="${resource.weight[1]}" data-resource="${key}" data-type="weight" data-weight="1" class="resource-weight-input"></div>
-      <div>2: <input type="number" min="0" value="${resource.weight[2]}" data-resource="${key}" data-type="weight" data-weight="2" class="resource-weight-input"></div>
-      <div>3: <input type="number" min="0" value="${resource.weight[3]}" data-resource="${key}" data-type="weight" data-weight="3" class="resource-weight-input"></div>
-    `;
   }
 
   renderResourceChances() {
@@ -220,6 +161,6 @@ class EventManager {
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', function () {
   const tabManager = new TabManager();
-  const configManager = new ConfigManager(config);
+  const resourceChancesManager = new ResourceChancesManager(config);
   const eventManager = new EventManager();
 });
