@@ -5,6 +5,7 @@ class TabManager {
     this.tabBtns = document.querySelectorAll('.tab-btn');
     this.wydarzeniaSection = document.getElementById('wydarzenia-section');
     this.mapaSection = document.getElementById('mapa-section');
+    this.szanseSection = document.getElementById('szanse-section');
     this.mapInitialized = false;
 
     // Clear any old tab values from localStorage and default to wydarzenia
@@ -39,11 +40,14 @@ class TabManager {
     this.tabBtns.forEach(b => b.setAttribute('aria-selected', 'false'));
     document.getElementById('tab-' + tab).setAttribute('aria-selected', 'true');
 
+    // Hide all sections first
+    this.wydarzeniaSection.style.display = 'none';
+    this.mapaSection.style.display = 'none';
+    this.szanseSection.style.display = 'none';
+
     if (tab === 'wydarzenia') {
       this.wydarzeniaSection.style.display = '';
-      this.mapaSection.style.display = 'none';
     } else if (tab === 'mapa') {
-      this.wydarzeniaSection.style.display = 'none';
       this.mapaSection.style.display = '';
 
       // Initialize map if not already done
@@ -56,6 +60,8 @@ class TabManager {
           console.error('Map canvas not found');
         }
       }
+    } else if (tab === 'szanse') {
+      this.szanseSection.style.display = '';
     }
 
     localStorage.setItem('selectedTab', tab);

@@ -15,6 +15,7 @@
   <div id="tabs">
     <button class="tab-btn" data-tab="wydarzenia" id="tab-wydarzenia" aria-selected="true">Wydarzenia</button>
     <button class="tab-btn" data-tab="mapa" id="tab-mapa" aria-selected="false">Mapa Morska</button>
+    <button class="tab-btn" data-tab="szanse" id="tab-szanse" aria-selected="false">Szanse na zasoby</button>
   </div>
   <div id="tab-content">
     <div id="wydarzenia-section">
@@ -27,16 +28,18 @@
           <div id="current-event"></div>
           <div id="event-log"></div>
         </div>
-        <div id="resource-chances">
-          <h2>Szanse na zasoby</h2>
-          <div id="chances-display"></div>
-        </div>
       </div>
     </div>
     <div id="mapa-section" style="display:none;">
       <h1>Mapa Morska - Linie Rumbowe</h1>
       <div class="map-container">
         <canvas id="nautical-map-canvas" width="800" height="600"></canvas>
+      </div>
+    </div>
+    <div id="szanse-section" style="display:none;">
+      <h1>Szanse na zasoby</h1>
+      <div id="resource-chances">
+        <div id="chances-display"></div>
       </div>
     </div>
   </div>
