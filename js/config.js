@@ -170,7 +170,7 @@ class ConfigData {
         color: "#FFD700",
         symbol: "gold",
         weight: {
-          1: 2,
+          1: 3,
           2: 2,
           3: 1
         }
@@ -232,7 +232,7 @@ class ConfigData {
       },
       fruit: {
         name: "Owoc",
-        cost: 1,
+        cost: 0.5,
         color: "#F44336",
         symbol: "fruit",
         weight: {
@@ -248,6 +248,17 @@ class ConfigData {
         symbol: "rum",
         weight: {
           1: 1,
+          2: 1,
+          3: 1
+        }
+      },
+      silver: {
+        name: "Srebro",
+        cost: 0.5,
+        color: "#C0C0C0",
+        symbol: "silver",
+        weight: {
+          1: 2,
           2: 1,
           3: 1
         }
@@ -336,6 +347,9 @@ class ConfigData {
       ],
       rum: [
         [1, 1]
+      ],
+      silver: [
+        [1]
       ]
     };
 
