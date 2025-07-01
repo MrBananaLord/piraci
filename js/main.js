@@ -277,7 +277,7 @@ class EnemyOverviewManager {
           const phaseData = levelData.phases[phase];
           html += `
             <div class="enemy-phase">
-              <span class="enemy-phase-name">${phaseDescriptions[phase]}</span>
+              <span class="enemy-phase-name">Etap ${phase}</span>
               <div class="enemy-phase-stats">
                 <div class="enemy-phase-stat">
                   <span class="enemy-phase-stat-label">Atak:</span>

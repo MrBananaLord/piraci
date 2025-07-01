@@ -12,30 +12,30 @@ class ConfigData {
         description: "Potężny okręt z grubym pancerzem, ale powolny i niezdarny",
         levels: {
           1: {
-            health: 8,
+            health: 3,
             rewardPoints: 6,
             phases: {
-              1: { attack: 3, defence: 2 }, // Cautious
-              2: { attack: 4, defence: 2 }, // Balanced
-              3: { attack: 5, defence: 1 }  // Aggressive
+              1: { attack: 2, defence: 1 }, // Cautious
+              2: { attack: 2, defence: 1 }, // Balanced
+              3: { attack: 3, defence: 0 }  // Aggressive
             }
           },
           2: {
-            health: 10,
-            rewardPoints: 8,
+            health: 6,
+            rewardPoints: 12,
             phases: {
-              1: { attack: 4, defence: 2 },
-              2: { attack: 5, defence: 2 },
-              3: { attack: 6, defence: 1 }
+              1: { attack: 3, defence: 3 },
+              2: { attack: 4, defence: 2 },
+              3: { attack: 5, defence: 1 }
             }
           },
           3: {
-            health: 13,
-            rewardPoints: 12,
+            health: 9,
+            rewardPoints: 18,
             phases: {
-              1: { attack: 5, defence: 2 },
-              2: { attack: 6, defence: 2 },
-              3: { attack: 7, defence: 1 }
+              1: { attack: 4, defence: 5 },
+              2: { attack: 5, defence: 4 },
+              3: { attack: 6, defence: 3 }
             }
           }
         }
@@ -45,30 +45,30 @@ class ConfigData {
         description: "Zwinny i szybki, ale łatwy do zniszczenia",
         levels: {
           1: {
-            health: 3,
-            rewardPoints: 4,
+            health: 2,
+            rewardPoints: 6,
             phases: {
-              1: { attack: 1, defence: 9 }, // Defensive
-              2: { attack: 2, defence: 7 }, // Balanced
-              3: { attack: 3, defence: 5 }  // Desperate
+              1: { attack: 0, defence: 3 }, // Defensive
+              2: { attack: 1, defence: 2 }, // Balanced
+              3: { attack: 2, defence: 1 }  // Desperate
             }
           },
           2: {
             health: 4,
-            rewardPoints: 6,
+            rewardPoints: 12,
             phases: {
-              1: { attack: 2, defence: 10 },
-              2: { attack: 3, defence: 8 },
-              3: { attack: 4, defence: 6 }
+              1: { attack: 1, defence: 5 },
+              2: { attack: 2, defence: 4 },
+              3: { attack: 3, defence: 3 }
             }
           },
           3: {
-            health: 5,
-            rewardPoints: 9,
+            health: 6,
+            rewardPoints: 18,
             phases: {
-              1: { attack: 3, defence: 11 },
-              2: { attack: 4, defence: 9 },
-              3: { attack: 5, defence: 7 }
+              1: { attack: 2, defence: 7 },
+              2: { attack: 3, defence: 6 },
+              3: { attack: 4, defence: 5 }
             }
           }
         }
@@ -78,30 +78,30 @@ class ConfigData {
         description: "Wszechstronny okręt z zrównoważonymi statystykami",
         levels: {
           1: {
-            health: 5,
-            rewardPoints: 5,
+            health: 3,
+            rewardPoints: 6,
             phases: {
-              1: { attack: 4, defence: 6 }, // Slightly defensive
-              2: { attack: 5, defence: 5 }, // Balanced
-              3: { attack: 6, defence: 4 }  // Slightly aggressive
+              1: { attack: 1, defence: 2 }, // Slightly defensive
+              2: { attack: 2, defence: 1 }, // Balanced
+              3: { attack: 2, defence: 1 }  // Slightly aggressive
             }
           },
           2: {
             health: 6,
-            rewardPoints: 7,
+            rewardPoints: 12,
             phases: {
-              1: { attack: 5, defence: 7 },
-              2: { attack: 6, defence: 6 },
-              3: { attack: 7, defence: 5 }
+              1: { attack: 2, defence: 4 },
+              2: { attack: 3, defence: 3 },
+              3: { attack: 4, defence: 2 }
             }
           },
           3: {
-            health: 7,
-            rewardPoints: 10,
+            health: 9,
+            rewardPoints: 18,
             phases: {
-              1: { attack: 6, defence: 8 },
-              2: { attack: 7, defence: 7 },
-              3: { attack: 8, defence: 6 }
+              1: { attack: 3, defence: 6 },
+              2: { attack: 4, defence: 5 },
+              3: { attack: 5, defence: 4 }
             }
           }
         }
@@ -111,30 +111,30 @@ class ConfigData {
         description: "Specjalizuje się w niszczących atakach, ale jest kruchy",
         levels: {
           1: {
-            health: 4,
-            rewardPoints: 5,
+            health: 2,
+            rewardPoints: 6,
             phases: {
-              1: { attack: 9, defence: 3 }, // Aggressive
-              2: { attack: 8, defence: 3 }, // Balanced
-              3: { attack: 10, defence: 2 } // Berserk
+              1: { attack: 3, defence: 0 }, // Aggressive
+              2: { attack: 2, defence: 1 }, // Balanced
+              3: { attack: 3, defence: 0 } // Berserk
             }
           },
           2: {
-            health: 5,
-            rewardPoints: 7,
+            health: 4,
+            rewardPoints: 12,
             phases: {
-              1: { attack: 10, defence: 3 },
-              2: { attack: 9, defence: 3 },
-              3: { attack: 12, defence: 2 }
+              1: { attack: 5, defence: 1 },
+              2: { attack: 4, defence: 2 },
+              3: { attack: 6, defence: 0 }
             }
           },
           3: {
             health: 6,
-            rewardPoints: 11,
+            rewardPoints: 18,
             phases: {
-              1: { attack: 11, defence: 3 },
-              2: { attack: 10, defence: 3 },
-              3: { attack: 14, defence: 2 }
+              1: { attack: 7, defence: 2 },
+              2: { attack: 6, defence: 3 },
+              3: { attack: 8, defence: 1 }
             }
           }
         }
