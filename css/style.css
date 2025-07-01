@@ -59,9 +59,89 @@ button:active {
 }
 
 #current-event .card {
-  background-color: #e1f5fe;
-  border-left: 4px solid #03a9f4;
-  animation: cardAppear 0.3s ease-out;
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  border: 2px solid #2196f3;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(33, 150, 243, 0.15);
+  animation: cardAppear 0.4s ease-out;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Level badge styling */
+.level-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.level-badge.level-1 {
+  background-color: #4caf50;
+}
+
+.level-badge.level-2 {
+  background-color: #ff9800;
+}
+
+.level-badge.level-3 {
+  background-color: #f44336;
+}
+
+#current-event .card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #2196f3, #03a9f4, #00bcd4);
+}
+
+#current-event .card h3 {
+  color: #1565c0;
+  font-size: 1.4em;
+  margin-bottom: 15px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+#current-event .card h4 {
+  color: #1976d2;
+  font-size: 1.2em;
+  margin: 15px 0 10px 0;
+  border-bottom: 2px solid #e3f2fd;
+  padding-bottom: 5px;
+}
+
+#current-event .card p {
+  margin: 8px 0;
+  line-height: 1.6;
+  color: #424242;
+}
+
+#current-event .card ol {
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  padding: 15px 25px;
+  margin: 10px 0;
+  border-left: 4px solid #2196f3;
+}
+
+#current-event .card li {
+  margin: 8px 0;
+  padding: 5px 0;
+  color: #424242;
 }
 
 #event-deck {
@@ -420,6 +500,100 @@ input[type="number"]:focus {
   padding-top: 15px;
 }
 
+#event-log .card {
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  border: 2px solid #2196f3;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(33, 150, 243, 0.15);
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 15px;
+  opacity: 0.9;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+/* Level badge styling for event log cards */
+#event-log .level-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+#event-log .level-badge.level-1 {
+  background-color: #4caf50;
+}
+
+#event-log .level-badge.level-2 {
+  background-color: #ff9800;
+}
+
+#event-log .level-badge.level-3 {
+  background-color: #f44336;
+}
+
+#event-log .card:hover {
+  opacity: 1;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(33, 150, 243, 0.2);
+}
+
+#event-log .card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #2196f3, #03a9f4, #00bcd4);
+}
+
+#event-log .card h3 {
+  color: #1565c0;
+  font-size: 1.4em;
+  margin-bottom: 15px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+#event-log .card h4 {
+  color: #1976d2;
+  font-size: 1.2em;
+  margin: 15px 0 10px 0;
+  border-bottom: 2px solid #e3f2fd;
+  padding-bottom: 5px;
+}
+
+#event-log .card p {
+  margin: 8px 0;
+  line-height: 1.6;
+  color: #424242;
+}
+
+#event-log .card ol {
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  padding: 15px 25px;
+  margin: 10px 0;
+  border-left: 4px solid #2196f3;
+}
+
+#event-log .card li {
+  margin: 8px 0;
+  padding: 5px 0;
+  color: #424242;
+}
+
 /* Responsive design */
 @media (max-width: 1200px) {
   #main {
@@ -469,12 +643,12 @@ input[type="number"]:focus {
 @keyframes cardAppear {
   from {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-30px) scale(0.95);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 

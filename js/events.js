@@ -66,18 +66,12 @@ class Enemy {
     return `
       <h4>${this.enemyType.name}</h4>
       <p><em>${this.enemyType.description}</em></p>
-      <p>Trudność: ${this.points} punktów</p>
       <p>Zdrowie: ${this.health}</p>
       <h5>Etapy walki:</h5>
       <ol>
-      ${this.stages.map((stage, i) => {
-      const phaseDescriptions = {
-        1: "Ostrożny",
-        2: "Zbalansowany",
-        3: "Agresywny"
-      };
-      return `<li>Etap ${i + 1} (${phaseDescriptions[stage.phase]}): Atak: ${stage.attack}, Obrona: ${stage.defence}</li>`;
-    }).join('')}
+      ${this.stages.map((stage, i) =>
+      `<li>Etap ${i + 1}: Atak: ${stage.attack}, Obrona: ${stage.defence}</li>`
+    ).join('')}
       </ol>
     `;
   }
@@ -205,7 +199,7 @@ class Event {
   renderTemplate() {
     return `
       <div class="card">
-        <p>Poziom: ${this.level}</p>
+        <div class="level-badge level-${this.level}">${this.level}</div>
         ${this.action.renderTemplate()}
       </div>
     `;
