@@ -48,12 +48,10 @@ class TabManager {
 
       // Initialize map if not already done
       if (!this.mapInitialized) {
-        console.log('Initializing nautical map...');
         const mapCanvas = document.getElementById('nautical-map-canvas');
         if (mapCanvas) {
           this.rhumbLinesMap = new RhumbLinesMap('nautical-map-canvas');
           this.mapInitialized = true;
-          console.log('Nautical map initialized');
         } else {
           console.error('Map canvas not found');
         }

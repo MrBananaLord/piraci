@@ -15,13 +15,11 @@ class RhumbLinesMap {
   }
 
   drawRhumbLines() {
-    console.log('Starting to draw rhumb lines map...');
     this.clearCanvas();
     this.drawBackground();
     this.drawAllRhumbLines();
     this.drawCardinalDirections();
     this.drawIntersectionPoints();
-    console.log('Finished drawing rhumb lines map');
   }
 
   drawAllRhumbLines() {
@@ -352,7 +350,6 @@ class RhumbLinesMap {
   }
 
   drawIntersectionPoints() {
-    console.log('Starting to draw intersection points...');
     const centerX = this.width / 2;
     const centerY = this.height / 2;
     const maxRadius = Math.min(this.width, this.height) / 2.5 - 5;
@@ -457,69 +454,66 @@ class RhumbLinesMap {
       lines.push({ x1: swX, y1: swY, x2: endX, y2: endY });
     }
 
-    // Find intersections with line tracking
-    const intersections = [];
-    const threshold = 8;
+    // Find true 3-line intersections
+    const threeLineIntersections = [];
+    const threshold = 5; // Smaller threshold for more precise detection
 
+    // Check all combinations of 3 lines
     for (let i = 0; i < lines.length; i++) {
       for (let j = i + 1; j < lines.length; j++) {
-        const intersection = this.getLineIntersection(lines[i], lines[j]);
-        if (intersection) {
-          intersections.push({
-            x: intersection.x,
-            y: intersection.y,
-            line1: i,
-            line2: j
-          });
+        for (let k = j + 1; k < lines.length; k++) {
+          const intersection1 = this.getLineIntersection(lines[i], lines[j]);
+          const intersection2 = this.getLineIntersection(lines[j], lines[k]);
+          const intersection3 = this.getLineIntersection(lines[i], lines[k]);
+
+          if (intersection1 && intersection2 && intersection3) {
+            // Check if all three intersections are close to each other (same point)
+            const dist12 = Math.sqrt((intersection1.x - intersection2.x) ** 2 + (intersection1.y - intersection2.y) ** 2);
+            const dist13 = Math.sqrt((intersection1.x - intersection3.x) ** 2 + (intersection1.y - intersection3.y) ** 2);
+            const dist23 = Math.sqrt((intersection2.x - intersection3.x) ** 2 + (intersection2.y - intersection3.y) ** 2);
+
+            if (dist12 < threshold && dist13 < threshold && dist23 < threshold) {
+              // Calculate average position
+              const avgX = (intersection1.x + intersection2.x + intersection3.x) / 3;
+              const avgY = (intersection1.y + intersection2.y + intersection3.y) / 3;
+
+              threeLineIntersections.push({
+                x: avgX,
+                y: avgY,
+                lines: [i, j, k]
+              });
+            }
+          }
         }
       }
     }
 
-    // Group nearby intersections and count unique lines
-    const groupedIntersections = [];
-    for (const point of intersections) {
-      let added = false;
-      for (const group of groupedIntersections) {
-        const distance = Math.sqrt((point.x - group.x) ** 2 + (point.y - group.y) ** 2);
+    // Remove duplicate intersections
+    const uniqueIntersections = [];
+    for (const intersection of threeLineIntersections) {
+      let isDuplicate = false;
+      for (const existing of uniqueIntersections) {
+        const distance = Math.sqrt((intersection.x - existing.x) ** 2 + (intersection.y - existing.y) ** 2);
         if (distance < threshold) {
-          // Add unique lines to this group
-          if (!group.lines.includes(point.line1)) {
-            group.lines.push(point.line1);
-          }
-          if (!group.lines.includes(point.line2)) {
-            group.lines.push(point.line2);
-          }
-          group.x = (group.x + point.x) / 2; // Average position
-          group.y = (group.y + point.y) / 2;
-          added = true;
+          isDuplicate = true;
           break;
         }
       }
-      if (!added) {
-        groupedIntersections.push({
-          x: point.x,
-          y: point.y,
-          lines: [point.line1, point.line2]
-        });
+      if (!isDuplicate) {
+        uniqueIntersections.push(intersection);
       }
     }
 
-    // Draw red circles for intersections with 3 or more unique lines
+    // Draw red circles for true 3-line intersections
     this.ctx.fillStyle = '#FF0000';
     this.ctx.strokeStyle = '#8B0000';
     this.ctx.lineWidth = 3;
 
-    console.log('Total intersections found:', intersections.length);
-    console.log('Grouped intersections:', groupedIntersections);
-
-    groupedIntersections.forEach(group => {
-      if (group.lines.length >= 3) {
-        console.log('Drawing circle at:', group.x, group.y, 'with', group.lines.length, 'unique lines');
-        this.ctx.beginPath();
-        this.ctx.arc(group.x, group.y, 12, 0, 2 * Math.PI);
-        this.ctx.fill();
-        this.ctx.stroke();
-      }
+    uniqueIntersections.forEach(intersection => {
+      this.ctx.beginPath();
+      this.ctx.arc(intersection.x, intersection.y, 12, 0, 2 * Math.PI);
+      this.ctx.fill();
+      this.ctx.stroke();
     });
   }
 
