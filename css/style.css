@@ -739,6 +739,7 @@ hr {
   position: relative;
   display: inline-block;
   margin-right: 10px;
+  overflow: hidden;
 }
 
 .tetris-square {
@@ -750,6 +751,7 @@ hr {
   display: flex;
   align-items: center;
   margin-right: 10px;
+  overflow: hidden;
 }
 
 .resource-chance {
@@ -790,6 +792,33 @@ hr {
 
 .resource-header .resource-symbol {
   margin-right: 12px;
+}
+
+/* Rewards display in event cards */
+.rewards-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.rewards-display .resource-item {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 0.9em;
+}
+
+.rewards-display .resource-symbol {
+  margin-right: 6px;
+}
+
+.rewards-display .resource-name {
+  font-weight: 500;
+  color: #2c3e50;
 }
 
 .resource-name {

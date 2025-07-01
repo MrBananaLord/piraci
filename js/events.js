@@ -1,5 +1,58 @@
 // Event system classes and event generation logic
 
+// Helper function to render resource symbols
+function renderResourceSymbols(resourceNames) {
+  return resourceNames.map(resourceName => {
+    // Find the resource by name
+    const resourceKey = Object.keys(config.resources).find(key =>
+      config.resources[key].name === resourceName
+    );
+
+    if (!resourceKey) {
+      return `<span class="resource-item">${resourceName}</span>`;
+    }
+
+    const resource = config.resources[resourceKey];
+    const symbol = config.getResourceSymbol(resource.symbol);
+    const symbolHtml = renderSymbol(symbol, resource.color);
+
+    return `<span class="resource-item">
+      <div class="resource-symbol">${symbolHtml}</div>
+      <span class="resource-name">${resourceName}</span>
+    </span>`;
+  }).join('');
+}
+
+function renderSymbol(symbol, color) {
+  const size = 10; // Smaller size for event cards
+  const gap = 1; // Smaller gap for event cards
+
+  // Calculate container dimensions
+  const maxCols = Math.max(...symbol.map(row => row.length));
+  const maxRows = symbol.length;
+  const containerWidth = maxCols * (size + gap) - gap;
+  const containerHeight = maxRows * (size + gap) - gap;
+
+  let html = `<div class="tetris-symbol" style="width: ${containerWidth}px; height: ${containerHeight}px;">`;
+  symbol.forEach((row, rowIndex) => {
+    row.forEach((cell, colIndex) => {
+      if (cell === 1) {
+        html += `<div class="tetris-square" style="
+          width: ${size}px; 
+          height: ${size}px; 
+          background-color: ${color}; 
+          position: absolute; 
+          left: ${colIndex * (size + gap)}px; 
+          top: ${rowIndex * (size + gap)}px;
+          border: 1px solid rgba(0,0,0,0.2);
+        "></div>`;
+      }
+    });
+  });
+  html += '</div>';
+  return html;
+}
+
 class RewardsGenerator {
   constructor(level, points) {
     this.level = level;
@@ -100,7 +153,9 @@ class Fight {
       <h3>${this.name}</h3>
       ${this.enemy.renderTemplate()}
       <h4>Nagroda</h4> 
-      <p>${this.rewards.join(", ")}</p>
+      <div class="rewards-display">
+        ${renderResourceSymbols(this.rewards)}
+      </div>
     `;
   }
 }
@@ -127,7 +182,9 @@ class Island {
       <h3>${this.name}</h3>
       ${specialMessage}
       <h4>Znalezione zasoby</h4> 
-      <p>${this.rewards.join(", ")}</p>
+      <div class="rewards-display">
+        ${renderResourceSymbols(this.rewards)}
+      </div>
     `;
   }
 }
@@ -159,7 +216,9 @@ class FloatingDebris {
       <h3>${this.name}</h3>
       <p>Widzisz pływające śmieci na powierzchni wody. Może znajdziesz coś użytecznego.</p>
       <h4>Znalezione przedmioty</h4> 
-      <p>${this.rewards.join(", ")}</p>
+      <div class="rewards-display">
+        ${renderResourceSymbols(this.rewards)}
+      </div>
     `;
   }
 }

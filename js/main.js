@@ -199,7 +199,13 @@ class ResourceChancesManager {
     const size = 12; // Size of each square
     const gap = 2; // Gap between squares
 
-    let html = '<div class="tetris-symbol">';
+    // Calculate container dimensions
+    const maxCols = Math.max(...symbol.map(row => row.length));
+    const maxRows = symbol.length;
+    const containerWidth = maxCols * (size + gap) - gap;
+    const containerHeight = maxRows * (size + gap) - gap;
+
+    let html = `<div class="tetris-symbol" style="width: ${containerWidth}px; height: ${containerHeight}px;">`;
     symbol.forEach((row, rowIndex) => {
       row.forEach((cell, colIndex) => {
         if (cell === 1) {
