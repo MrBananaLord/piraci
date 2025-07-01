@@ -117,6 +117,7 @@ class ResourceChancesManager {
           const total = totalWeights[level];
           const chance = total > 0 ? ((resource.weight[level] / total) * 100).toFixed(1) : '0.0';
           return {
+            key: key,
             name: resource.name,
             chance: parseFloat(chance),
             cost: resource.cost
@@ -127,8 +128,13 @@ class ResourceChancesManager {
 
       if (resourcesWithChances.length > 0) {
         resourcesWithChances.forEach(resource => {
+          const resourceData = this.config.resources[resource.key];
+          const symbol = this.config.getResourceSymbol(resourceData.symbol);
+          const symbolHtml = this.renderSymbol(symbol, resourceData.color);
+
           html += `
             <div class="chance-resource-item">
+              <div class="resource-symbol">${symbolHtml}</div>
               <span class="resource-name">${resource.name}</span>
               <span class="resource-chance">${resource.chance}%</span>
               <span class="resource-cost">(koszt: ${resource.cost})</span>
@@ -166,9 +172,14 @@ class ResourceChancesManager {
       .sort((a, b) => a.cost - b.cost);
 
     allResources.forEach(resource => {
+      const resourceData = this.config.resources[resource.key];
+      const symbol = this.config.getResourceSymbol(resourceData.symbol);
+      const symbolHtml = this.renderSymbol(symbol, resourceData.color);
+
       html += `
         <div class="resource-card">
           <div class="resource-header">
+            <div class="resource-symbol">${symbolHtml}</div>
             <span class="resource-name">${resource.name}</span>
           </div>
           <div class="resource-value">
@@ -182,6 +193,30 @@ class ResourceChancesManager {
     });
 
     resourcesList.innerHTML = html;
+  }
+
+  renderSymbol(symbol, color) {
+    const size = 12; // Size of each square
+    const gap = 2; // Gap between squares
+
+    let html = '<div class="tetris-symbol">';
+    symbol.forEach((row, rowIndex) => {
+      row.forEach((cell, colIndex) => {
+        if (cell === 1) {
+          html += `<div class="tetris-square" style="
+            width: ${size}px; 
+            height: ${size}px; 
+            background-color: ${color}; 
+            position: absolute; 
+            left: ${colIndex * (size + gap)}px; 
+            top: ${rowIndex * (size + gap)}px;
+            border: 1px solid rgba(0,0,0,0.2);
+          "></div>`;
+        }
+      });
+    });
+    html += '</div>';
+    return html;
   }
 }
 

@@ -145,6 +145,8 @@ class ConfigData {
       epic_story: {
         name: "Epicka historia",
         cost: 8,
+        color: "#E91E63",
+        symbol: "epic_story",
         weight: {
           1: 0,
           2: 0,
@@ -154,6 +156,8 @@ class ConfigData {
       character: {
         name: "Postać",
         cost: 4,
+        color: "#9E9E9E",
+        symbol: "character",
         weight: {
           1: 0,
           2: 2,
@@ -163,6 +167,8 @@ class ConfigData {
       gold: {
         name: "Złoto",
         cost: 1,
+        color: "#FFD700",
+        symbol: "gold",
         weight: {
           1: 2,
           2: 2,
@@ -172,6 +178,8 @@ class ConfigData {
       wood: {
         name: "Drewno",
         cost: 1,
+        color: "#8D6E63",
+        symbol: "wood",
         weight: {
           1: 1,
           2: 2,
@@ -181,6 +189,8 @@ class ConfigData {
       grain: {
         name: "Zboże",
         cost: 2,
+        color: "#FF9800",
+        symbol: "grain",
         weight: {
           1: 0,
           2: 1,
@@ -190,6 +200,8 @@ class ConfigData {
       gunpowder: {
         name: "Proch",
         cost: 2,
+        color: "#212121",
+        symbol: "gunpowder",
         weight: {
           1: 0,
           2: 1,
@@ -199,6 +211,8 @@ class ConfigData {
       iron: {
         name: "Żelazo",
         cost: 2,
+        color: "#607D8B",
+        symbol: "iron",
         weight: {
           1: 0,
           2: 1,
@@ -208,6 +222,8 @@ class ConfigData {
       cotton: {
         name: "Bawełna",
         cost: 2,
+        color: "#F5F5F5",
+        symbol: "cotton",
         weight: {
           1: 0,
           2: 1,
@@ -217,6 +233,8 @@ class ConfigData {
       fruit: {
         name: "Owoc",
         cost: 1,
+        color: "#F44336",
+        symbol: "fruit",
         weight: {
           1: 1,
           2: 1,
@@ -226,6 +244,8 @@ class ConfigData {
       rum: {
         name: "Rum",
         cost: 1,
+        color: "#4CAF50",
+        symbol: "rum",
         weight: {
           1: 1,
           2: 1,
@@ -277,6 +297,45 @@ class ConfigData {
   getRandomEnemyType() {
     const types = this.getAllEnemyTypes();
     return types[Math.floor(Math.random() * types.length)];
+  }
+
+  getResourceSymbol(symbolType) {
+    const symbols = {
+      epic_story: [
+        [1, 1]
+      ],
+      character: [
+        [1, 1],
+        [1, 1]
+      ],
+      gold: [
+        [1]
+      ],
+      wood: [
+        [1, 1, 1]
+      ],
+      grain: [
+        [1, 1, 0],
+        [0, 1, 1]
+      ],
+      gunpowder: [
+        [1, 1, 1],
+        [0, 1, 0]
+      ],
+      iron: [
+        [1, 0],
+        [1, 0],
+        [1, 1]
+      ],
+      fruit: [
+        [1]
+      ],
+      rum: [
+        [1, 1]
+      ]
+    };
+
+    return symbols[symbolType] || symbols.gold;
   }
 }
 
