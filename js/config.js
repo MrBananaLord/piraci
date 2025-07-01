@@ -327,6 +327,10 @@ class ConfigData {
         [1, 0],
         [1, 1]
       ],
+      cotton: [
+        [1, 1],
+        [1, 1]
+      ],
       fruit: [
         [1]
       ],

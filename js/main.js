@@ -198,14 +198,15 @@ class ResourceChancesManager {
   renderSymbol(symbol, color) {
     const size = 12; // Size of each square
     const gap = 2; // Gap between squares
+    const borderWidth = 1; // Border width of squares
 
-    // Calculate container dimensions
+    // Calculate container dimensions with padding for borders
     const maxCols = Math.max(...symbol.map(row => row.length));
     const maxRows = symbol.length;
-    const containerWidth = maxCols * (size + gap) - gap;
-    const containerHeight = maxRows * (size + gap) - gap;
+    const containerWidth = maxCols * (size + gap) - gap + borderWidth * 2;
+    const containerHeight = maxRows * (size + gap) - gap + borderWidth * 2;
 
-    let html = `<div class="tetris-symbol" style="width: ${containerWidth}px; height: ${containerHeight}px;">`;
+    let html = `<div class="tetris-symbol" style="width: ${containerWidth}px; height: ${containerHeight}px; padding: ${borderWidth}px;">`;
     symbol.forEach((row, rowIndex) => {
       row.forEach((cell, colIndex) => {
         if (cell === 1) {
