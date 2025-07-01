@@ -6,6 +6,7 @@ class TabManager {
     this.wydarzeniaSection = document.getElementById('wydarzenia-section');
     this.mapaSection = document.getElementById('mapa-section');
     this.szanseSection = document.getElementById('szanse-section');
+    this.wrogowieSection = document.getElementById('wrogowie-section');
     this.mapInitialized = false;
 
     // Clear any old tab values from localStorage and default to wydarzenia
@@ -44,6 +45,7 @@ class TabManager {
     this.wydarzeniaSection.style.display = 'none';
     this.mapaSection.style.display = 'none';
     this.szanseSection.style.display = 'none';
+    this.wrogowieSection.style.display = 'none';
 
     if (tab === 'wydarzenia') {
       this.wydarzeniaSection.style.display = '';
@@ -62,6 +64,8 @@ class TabManager {
       }
     } else if (tab === 'szanse') {
       this.szanseSection.style.display = '';
+    } else if (tab === 'wrogowie') {
+      this.wrogowieSection.style.display = '';
     }
 
     localStorage.setItem('selectedTab', tab);
@@ -174,9 +178,106 @@ class EventManager {
   }
 }
 
+class EnemyOverviewManager {
+  constructor(config) {
+    this.config = config;
+    this.init();
+  }
+
+  init() {
+    this.renderEnemyOverview();
+  }
+
+  renderEnemyOverview() {
+    const enemiesOverview = document.getElementById('enemies-overview');
+    if (!enemiesOverview) {
+      return;
+    }
+
+    let html = '';
+
+    // Get all enemy types
+    const enemyTypes = this.config.getAllEnemyTypes();
+
+    enemyTypes.forEach(typeKey => {
+      const enemyType = this.config.getEnemyType(typeKey);
+
+      html += `
+        <div class="enemy-type-section">
+          <h2 class="enemy-type-header">${enemyType.name}</h2>
+          <div class="enemy-type-description">${enemyType.description}</div>
+          <div class="enemy-levels-grid">
+      `;
+
+      // Add cards for each level
+      [1, 2, 3].forEach(level => {
+        const levelData = enemyType.levels[level];
+        const phaseDescriptions = {
+          1: "Ostrożny",
+          2: "Zbalansowany",
+          3: "Agresywny"
+        };
+
+        html += `
+          <div class="enemy-level-card">
+            <div class="enemy-level-title">Poziom ${level}</div>
+            <div class="enemy-stats">
+              <div class="enemy-stat">
+                <span class="enemy-stat-label">Zdrowie:</span>
+                <span class="enemy-stat-value">${levelData.health}</span>
+              </div>
+              <div class="enemy-stat">
+                <span class="enemy-stat-label">Punkty nagrody:</span>
+                <span class="enemy-stat-value">${levelData.rewardPoints}</span>
+              </div>
+            </div>
+            <div class="enemy-phases">
+              <div class="enemy-phases-title">Etapy walki:</div>
+        `;
+
+        // Add phases
+        [1, 2, 3].forEach(phase => {
+          const phaseData = levelData.phases[phase];
+          html += `
+            <div class="enemy-phase">
+              <span class="enemy-phase-name">${phaseDescriptions[phase]}</span>
+              <div class="enemy-phase-stats">
+                <div class="enemy-phase-stat">
+                  <span class="enemy-phase-stat-label">Atak:</span>
+                  <span class="enemy-phase-stat-value">${phaseData.attack}</span>
+                </div>
+                <div class="enemy-phase-stat">
+                  <span class="enemy-phase-stat-label">Obrona:</span>
+                  <span class="enemy-phase-stat-value">${phaseData.defence}</span>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+
+        html += `
+            </div>
+            <div class="reward-points">
+              Nagroda: ${levelData.rewardPoints} punktów
+            </div>
+          </div>
+        `;
+      });
+
+      html += `
+          </div>
+        </div>
+      `;
+    });
+
+    enemiesOverview.innerHTML = html;
+  }
+}
+
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', function () {
   const tabManager = new TabManager();
   const resourceChancesManager = new ResourceChancesManager(config);
   const eventManager = new EventManager();
+  const enemyOverviewManager = new EnemyOverviewManager(config);
 });

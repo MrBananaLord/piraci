@@ -610,3 +610,149 @@ hr {
 .map-info strong {
   color: #2c3e50;
 }
+
+/* Enemy Overview Styles */
+#enemies-overview {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.enemy-type-section {
+  margin-bottom: 30px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.enemy-type-header {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: white;
+  padding: 20px;
+  margin: 0;
+}
+
+.enemy-type-description {
+  padding: 15px 20px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  font-style: italic;
+  color: #6c757d;
+}
+
+.enemy-levels-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.enemy-level-card {
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  background-color: #f8f9fa;
+  padding: 15px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.enemy-level-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.enemy-level-title {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.enemy-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.enemy-stat {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background-color: white;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+}
+
+.enemy-stat-label {
+  font-weight: 600;
+  color: #495057;
+}
+
+.enemy-stat-value {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.enemy-phases {
+  margin-top: 15px;
+}
+
+.enemy-phases-title {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.enemy-phase {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  margin-bottom: 5px;
+  background-color: white;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+  font-size: 0.9em;
+}
+
+.enemy-phase-name {
+  font-weight: 600;
+  color: #495057;
+  min-width: 80px;
+}
+
+.enemy-phase-stats {
+  display: flex;
+  gap: 15px;
+}
+
+.enemy-phase-stat {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.enemy-phase-stat-label {
+  font-size: 0.8em;
+  color: #6c757d;
+}
+
+.enemy-phase-stat-value {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.reward-points {
+  text-align: center;
+  margin-top: 10px;
+  padding: 8px;
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  border-radius: 4px;
+  color: #155724;
+  font-weight: bold;
+}

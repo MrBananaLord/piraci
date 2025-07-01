@@ -29,43 +29,46 @@ class RewardsGenerator {
 class Enemy {
   constructor(name, level) {
     this.name = name;
+    this.level = level;
 
-    let points = (level - 1) * config.enemyScaling + Math.floor(Math.random() * config.enemyScaling) + 1;
-    this.points = points;
+    // Select random enemy type
+    this.typeKey = config.getRandomEnemyType();
+    this.enemyType = config.getEnemyType(this.typeKey);
 
-    this.health = Math.floor(Math.random() * config.enemyScaling) + 1;
+    // Calculate stats for each phase
     this.stages = [];
-
-    let stagePoints = this.points;
-    for (let i = 0; i < 3; i++) {
-      let stageAttack = Math.floor(Math.random() * stagePoints);
-      let stageDefence = Math.floor(Math.random() * (stagePoints - stageAttack));
+    for (let phase = 1; phase <= 3; phase++) {
+      const stats = config.getEnemyStats(this.typeKey, level, phase);
       this.stages.push({
-        attack: stageAttack,
-        defence: stageDefence
+        attack: stats.attack,
+        defence: stats.defence,
+        phase: phase
       });
     }
 
-    // Balance the points
-    let totalAttack = this.stages.reduce((sum, s) => sum + s.attack, 0);
-    let totalDefence = this.stages.reduce((sum, s) => sum + s.defence, 0);
-    let diff = this.points - (totalAttack + totalDefence);
-    if (diff > 0) {
-      this.stages[0].attack += diff;
-    }
+    // Get base stats for health and reward points
+    const baseStats = config.getEnemyStats(this.typeKey, level, 2); // Use phase 2 as base
+    this.health = baseStats.health;
+    this.points = baseStats.rewardPoints;
   }
 
   renderTemplate() {
     return `
-      <h4>${this.name}</h4>
-      <p>Trudność: ${this.points}</p>
+      <h4>${this.enemyType.name}</h4>
+      <p><em>${this.enemyType.description}</em></p>
+      <p>Trudność: ${this.points} punktów</p>
+      <p>Zdrowie: ${this.health}</p>
       <h5>Etapy walki:</h5>
       <ol>
-      ${this.stages.map((stage, i) => `
-        <li>Etap ${i + 1}: Atak: ${stage.attack}, Obrona: ${stage.defence}</li>
-      `).join('')}
+      ${this.stages.map((stage, i) => {
+      const phaseDescriptions = {
+        1: "Ostrożny",
+        2: "Zbalansowany",
+        3: "Agresywny"
+      };
+      return `<li>Etap ${i + 1} (${phaseDescriptions[stage.phase]}): Atak: ${stage.attack}, Obrona: ${stage.defence}</li>`;
+    }).join('')}
       </ol>
-      <p>Zdrowie: ${this.health}<p>
     `;
   }
 }
