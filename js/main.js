@@ -80,6 +80,7 @@ class ResourceChancesManager {
 
   init() {
     this.renderResourceChances();
+    this.renderResourceDetails();
   }
 
   renderResourceChances() {
@@ -145,6 +146,42 @@ class ResourceChancesManager {
     });
 
     chancesDisplay.innerHTML = html;
+  }
+
+  renderResourceDetails() {
+    const resourcesList = document.getElementById('resources-list');
+    if (!resourcesList) {
+      return;
+    }
+
+    let html = '';
+
+    // Get all resources and sort them by cost (ascending)
+    const allResources = Object.entries(this.config.resources)
+      .map(([key, resource]) => ({
+        key,
+        name: resource.name,
+        cost: resource.cost
+      }))
+      .sort((a, b) => a.cost - b.cost);
+
+    allResources.forEach(resource => {
+      html += `
+        <div class="resource-card">
+          <div class="resource-header">
+            <span class="resource-name">${resource.name}</span>
+          </div>
+          <div class="resource-value">
+            <div class="value-info">
+              <span class="value-label">Punkty nagród:</span>
+              <span class="value-points">${resource.cost}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+
+    resourcesList.innerHTML = html;
   }
 }
 

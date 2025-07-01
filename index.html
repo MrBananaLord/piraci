@@ -15,7 +15,7 @@
   <div id="tabs">
     <button class="tab-btn" data-tab="wydarzenia" id="tab-wydarzenia" aria-selected="true">Wydarzenia</button>
     <button class="tab-btn" data-tab="mapa" id="tab-mapa" aria-selected="false">Mapa Morska</button>
-    <button class="tab-btn" data-tab="szanse" id="tab-szanse" aria-selected="false">Szanse na zasoby</button>
+    <button class="tab-btn" data-tab="szanse" id="tab-szanse" aria-selected="false">Zasoby</button>
     <button class="tab-btn" data-tab="wrogowie" id="tab-wrogowie" aria-selected="false">Wrogowie</button>
   </div>
   <div id="tab-content">
@@ -38,9 +38,16 @@
       </div>
     </div>
     <div id="szanse-section" style="display:none;">
-      <h1>Szanse na zasoby</h1>
-      <div id="resource-chances">
-        <div id="chances-display"></div>
+      <h1>Zasoby</h1>
+      <div id="resources-content">
+        <div id="resource-chances">
+          <h2>Szanse na zasoby</h2>
+          <div id="chances-display"></div>
+        </div>
+        <div id="resource-details">
+          <h2>Wartość zasobów (punkty nagród)</h2>
+          <div id="resources-list"></div>
+        </div>
       </div>
     </div>
     <div id="wrogowie-section" style="display:none;">

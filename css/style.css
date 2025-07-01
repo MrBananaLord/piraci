@@ -487,14 +487,36 @@ hr {
 }
 
 /* Resource Chances Display */
+#resources-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
 #resource-chances {
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 20px;
   background-color: #fff;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-  max-width: 800px;
-  margin: 0 auto;
+}
+
+#resource-details {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+#resources-content h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #2c3e50;
+  font-size: 1.4em;
 }
 
 .chance-level-section {
@@ -546,6 +568,74 @@ hr {
   color: #7f8c8d;
   font-size: 0.85em;
   font-style: italic;
+}
+
+/* Resource Details Styles */
+.resource-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 15px;
+  background-color: #fafbfc;
+  transition: all 0.2s;
+}
+
+.resource-card:hover {
+  border-color: #bdbdbd;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.resource-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.resource-name {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.resource-cost-badge {
+  background-color: #3498db;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.9em;
+  font-weight: bold;
+}
+
+.resource-value {
+  margin-top: 15px;
+}
+
+.value-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  border-radius: 6px;
+  color: #155724;
+}
+
+.value-label {
+  font-weight: 600;
+  font-size: 0.95em;
+}
+
+.value-points {
+  font-weight: bold;
+  font-size: 1.1em;
+  background-color: #28a745;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  min-width: 30px;
+  text-align: center;
 }
 
 /* Nautical Map Styles */
