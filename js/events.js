@@ -66,13 +66,24 @@ class Enemy {
     return `
       <h4>${this.enemyType.name}</h4>
       <p><em>${this.enemyType.description}</em></p>
-      <p>Zdrowie: ${this.health}</p>
-      <h5>Etapy walki:</h5>
-      <ol>
-      ${this.stages.map((stage, i) =>
-      `<li>Etap ${i + 1}: Atak: ${stage.attack}, Obrona: ${stage.defence}</li>`
-    ).join('')}
-      </ol>
+      <p><strong>Zdrowie: ${this.health}</strong></p>
+      <div class="enemy-phases">
+        ${this.stages.map((stage, i) => `
+          <div class="enemy-phase">
+            <span class="enemy-phase-name">Etap ${i + 1}</span>
+            <div class="enemy-phase-stats">
+              <div class="enemy-phase-stat">
+                <span class="enemy-phase-stat-label">Atak:</span>
+                <span class="enemy-phase-stat-value">${stage.attack}</span>
+              </div>
+              <div class="enemy-phase-stat">
+                <span class="enemy-phase-stat-label">Obrona:</span>
+                <span class="enemy-phase-stat-value">${stage.defence}</span>
+              </div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
     `;
   }
 }
