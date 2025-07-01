@@ -35,21 +35,31 @@ class Enemy {
     this.typeKey = config.getRandomEnemyType();
     this.enemyType = config.getEnemyType(this.typeKey);
 
-    // Calculate stats for each phase
+    // Get all stages for this enemy type and level
     this.stages = [];
     for (let phase = 1; phase <= 3; phase++) {
-      const stats = config.getEnemyStats(this.typeKey, level, phase);
+      const phaseData = this.enemyType.levels[level].phases[phase];
       this.stages.push({
-        attack: stats.attack,
-        defence: stats.defence,
+        attack: phaseData.attack,
+        defence: phaseData.defence,
         phase: phase
       });
     }
 
+    // Shuffle the stages
+    this.shuffleStages();
+
     // Get base stats for health and reward points
-    const baseStats = config.getEnemyStats(this.typeKey, level, 2); // Use phase 2 as base
-    this.health = baseStats.health;
-    this.points = baseStats.rewardPoints;
+    this.health = this.enemyType.levels[level].health;
+    this.points = this.enemyType.levels[level].rewardPoints;
+  }
+
+  shuffleStages() {
+    // Fisher-Yates shuffle algorithm
+    for (let i = this.stages.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [this.stages[i], this.stages[j]] = [this.stages[j], this.stages[i]];
+    }
   }
 
   renderTemplate() {
