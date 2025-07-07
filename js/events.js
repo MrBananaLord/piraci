@@ -55,9 +55,10 @@ function renderSymbol(symbol, color) {
 }
 
 class RewardsGenerator {
-  constructor(level, points) {
+  constructor(level, points, enemyType = null) {
     this.level = level;
     this.points = points;
+    this.enemyType = enemyType;
     this.rewardsPool = config.getAllResources();
   }
 
@@ -66,8 +67,18 @@ class RewardsGenerator {
     let remainingPoints = this.points;
 
     while (remainingPoints > 0) {
-      const weightedPool = this.rewardsPool.filter(reward => reward.cost <= remainingPoints)
-        .flatMap(reward => Array(reward.weight[this.level]).fill(reward));
+      // Use enemy-specific weights if available, otherwise fall back to default weights
+      const weightedPool = this.rewardsPool.filter(reward => {
+        const weight = this.enemyType
+          ? config.getResourceWeightForEnemy(reward.symbol, this.enemyType, this.level)
+          : reward.weight[this.level];
+        return reward.cost <= remainingPoints && weight > 0;
+      }).flatMap(reward => {
+        const weight = this.enemyType
+          ? config.getResourceWeightForEnemy(reward.symbol, this.enemyType, this.level)
+          : reward.weight[this.level];
+        return Array(weight).fill(reward);
+      });
 
       if (weightedPool.length === 0) break;
 
@@ -146,7 +157,7 @@ class Fight {
   constructor(level = 1) {
     this.name = "Walka!";
     this.enemy = new Enemy("Wróg", level);
-    this.rewards = new RewardsGenerator(level, this.enemy.points).rewards();
+    this.rewards = new RewardsGenerator(level, this.enemy.points, this.enemy.typeKey).rewards();
   }
 
   renderTemplate() {

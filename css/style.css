@@ -662,12 +662,18 @@ hr {
 
 /* Resource Chances Display */
 #resources-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 30px;
   max-width: 1400px;
   margin: 0 auto;
   padding: 20px;
+}
+
+.resources-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
 }
 
 #resource-chances {
@@ -1099,4 +1105,112 @@ hr {
   border-radius: 4px;
   color: #155724;
   font-weight: bold;
+}
+
+/* Enemy Reward Chances Styles */
+.enemy-reward-chances-section {
+  margin-bottom: 40px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.enemy-reward-chances-section h2 {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  padding: 20px;
+  margin: 0;
+  text-align: center;
+}
+
+.enemy-reward-chances-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.enemy-reward-chances-card {
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  background-color: #f8f9fa;
+  padding: 15px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.enemy-reward-chances-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.enemy-reward-chances-card h3 {
+  margin: 0 0 10px 0;
+  color: #2c3e50;
+  font-size: 1.3em;
+  text-align: center;
+}
+
+.enemy-reward-description {
+  margin: 0 0 15px 0;
+  font-style: italic;
+  color: #6c757d;
+  text-align: center;
+  font-size: 0.9em;
+}
+
+.enemy-chance-level-section {
+  margin-bottom: 15px;
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.enemy-chance-level-section h4 {
+  margin: 0 0 10px 0;
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+.enemy-chance-resources {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.enemy-chance-resource-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 10px;
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+
+.enemy-chance-resource-item .resource-symbol {
+  margin-right: 8px;
+}
+
+.enemy-chance-resource-item .resource-name {
+  font-weight: 600;
+  color: #2c3e50;
+  flex: 1;
+}
+
+.enemy-chance-resource-item .resource-chance {
+  font-weight: bold;
+  color: #28a745;
+  margin: 0 10px;
+  min-width: 45px;
+  text-align: center;
+}
+
+.enemy-chance-resource-item .resource-cost {
+  color: #6c757d;
+  font-size: 0.8em;
+  font-style: italic;
 }

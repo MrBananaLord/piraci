@@ -180,6 +180,38 @@ class ConfigData {
         }
       }
     };
+
+    // Enemy-specific reward weights
+    this.enemyRewardWeights = {
+      warship: {
+        // Warships drop military and valuable resources
+        epic_story: { 1: 0, 2: 0, 3: 8 },
+        character: { 1: 0, 2: 4, 3: 6 },
+        gold: { 1: 2, 2: 3, 3: 2 },
+        wood: { 1: 1, 2: 1, 3: 1 },
+        grain: { 1: 0, 2: 1, 3: 2 },
+        gunpowder: { 1: 0, 2: 3, 3: 4 },
+        iron: { 1: 0, 2: 2, 3: 3 },
+        cotton: { 1: 0, 2: 1, 3: 1 },
+        fruit: { 1: 0, 2: 0, 3: 0 },
+        rum: { 1: 0, 2: 1, 3: 1 },
+        silver: { 1: 1, 2: 2, 3: 2 }
+      },
+      merchant: {
+        // Merchant ships drop trade goods and basic resources
+        epic_story: { 1: 0, 2: 0, 3: 2 },
+        character: { 1: 0, 2: 1, 3: 2 },
+        gold: { 1: 4, 2: 3, 3: 2 },
+        wood: { 1: 3, 2: 4, 3: 3 },
+        grain: { 1: 2, 2: 3, 3: 4 },
+        gunpowder: { 1: 0, 2: 0, 3: 1 },
+        iron: { 1: 0, 2: 1, 3: 2 },
+        cotton: { 1: 2, 2: 3, 3: 4 },
+        fruit: { 1: 3, 2: 2, 3: 1 },
+        rum: { 1: 2, 2: 3, 3: 2 },
+        silver: { 1: 3, 2: 2, 3: 1 }
+      }
+    };
   }
 
   getResourceByKey(key) {
@@ -251,6 +283,15 @@ class ConfigData {
   getRandomEnemyType() {
     const types = this.getAllEnemyTypes();
     return types[Math.floor(Math.random() * types.length)];
+  }
+
+  getEnemyRewardWeights(enemyType) {
+    return this.enemyRewardWeights[enemyType] || this.enemyRewardWeights.merchant;
+  }
+
+  getResourceWeightForEnemy(resourceKey, enemyType, level) {
+    const enemyWeights = this.getEnemyRewardWeights(enemyType);
+    return enemyWeights[resourceKey]?.[level] || 0;
   }
 
   getResourceSymbol(symbolType) {

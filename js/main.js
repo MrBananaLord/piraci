@@ -81,6 +81,7 @@ class ResourceChancesManager {
   init() {
     this.renderResourceChances();
     this.renderResourceDetails();
+    this.renderEnemyRewardChances();
   }
 
   renderResourceChances() {
@@ -193,6 +194,112 @@ class ResourceChancesManager {
     });
 
     resourcesList.innerHTML = html;
+  }
+
+  renderEnemyRewardChances() {
+    const resourcesContent = document.getElementById('resources-content');
+    if (!resourcesContent) {
+      return;
+    }
+
+    // Add enemy reward chances section to the resources content
+    const enemyRewardSection = document.createElement('div');
+    enemyRewardSection.innerHTML = `
+      <div class="enemy-reward-chances-section">
+        <h2>Szanse na nagrody według typu wroga</h2>
+        <div class="enemy-reward-chances-grid">
+          ${this.renderEnemyRewardChancesContent()}
+        </div>
+      </div>
+    `;
+
+    // Insert at the beginning of the resources content
+    resourcesContent.insertBefore(enemyRewardSection, resourcesContent.firstChild);
+  }
+
+  renderEnemyRewardChancesContent() {
+    let html = '';
+
+    // Get all enemy types
+    const enemyTypes = this.config.getAllEnemyTypes();
+
+    enemyTypes.forEach(typeKey => {
+      const enemyType = this.config.getEnemyType(typeKey);
+      const enemyWeights = this.config.getEnemyRewardWeights(typeKey);
+
+      html += `
+        <div class="enemy-reward-chances-card">
+          <h3>${enemyType.name}</h3>
+          <p class="enemy-reward-description">${enemyType.description}</p>
+      `;
+
+      // Create sections for each deck level
+      [1, 2, 3].forEach(level => {
+        const levelNames = ['Normalne (1)', 'Trudne (2)', 'Epickie (3)'];
+        const levelColors = ['#4caf50', '#ff9800', '#f44336'];
+
+        html += `
+          <div class="enemy-chance-level-section">
+            <h4 style="color: ${levelColors[level - 1]}">${levelNames[level - 1]}</h4>
+            <div class="enemy-chance-resources">
+        `;
+
+        // Calculate total weights for this enemy type and level
+        let totalWeight = 0;
+        Object.keys(enemyWeights).forEach(resourceKey => {
+          totalWeight += enemyWeights[resourceKey][level] || 0;
+        });
+
+        // Get all resources with their chances for this enemy type and level
+        const resourcesWithChances = Object.entries(enemyWeights)
+          .map(([resourceKey, weights]) => {
+            const resource = this.config.getResourceByKey(resourceKey);
+            if (!resource) return null;
+
+            const weight = weights[level] || 0;
+            const chance = totalWeight > 0 ? ((weight / totalWeight) * 100).toFixed(1) : '0.0';
+
+            return {
+              key: resourceKey,
+              name: resource.name,
+              chance: parseFloat(chance),
+              cost: resource.cost
+            };
+          })
+          .filter(resource => resource && resource.chance > 0)
+          .sort((a, b) => b.chance - a.chance);
+
+        if (resourcesWithChances.length > 0) {
+          resourcesWithChances.forEach(resource => {
+            const resourceData = this.config.getResourceByKey(resource.key);
+            const symbol = this.config.getResourceSymbol(resourceData.symbol);
+            const symbolHtml = this.renderSymbol(symbol, resourceData.color);
+
+            html += `
+              <div class="enemy-chance-resource-item">
+                <div class="resource-symbol">${symbolHtml}</div>
+                <span class="resource-name">${resource.name}</span>
+                <span class="resource-chance">${resource.chance}%</span>
+                <span class="resource-cost">(koszt: ${resource.cost})</span>
+              </div>
+            `;
+          });
+        } else {
+          html += '<div class="enemy-chance-resource-item">Brak dostępnych zasobów</div>';
+        }
+
+        html += `
+            </div>
+          </div>
+        `;
+      });
+
+      html += `
+        </div>
+      `;
+    });
+
+    return html;
   }
 
   renderSymbol(symbol, color) {
