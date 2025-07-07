@@ -486,8 +486,11 @@ class EnemyOverviewManager {
   }
 
   rerollPhases(typeKey, level, button) {
-    // Clear the current distribution to force regeneration
-    this.config.currentDistribution = null;
+    // Clear the specific distributions for this enemy type and level
+    if (this.config.distributions) {
+      delete this.config.distributions[`${typeKey}_${level}_attack`];
+      delete this.config.distributions[`${typeKey}_${level}_defence`];
+    }
 
     // Get the enemy card
     const enemyCard = button.closest('.enemy-level-card');

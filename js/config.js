@@ -319,8 +319,8 @@ class ConfigData {
     const totalDefence = levelData.totalDefence;
 
     // Create distribution patterns for different phases
-    const attackDistribution = this.getPhaseDistribution(totalAttack, phase);
-    const defenceDistribution = this.getPhaseDistribution(totalDefence, phase);
+    const attackDistribution = this.getPhaseDistribution(totalAttack, phase, typeKey, level, 'attack');
+    const defenceDistribution = this.getPhaseDistribution(totalDefence, phase, typeKey, level, 'defence');
 
     return {
       health: levelData.health,
@@ -330,30 +330,37 @@ class ConfigData {
     };
   }
 
-  getPhaseDistribution(total, phase) {
+  getPhaseDistribution(total, phase, typeKey, level, statType) {
+    // Create a unique key for this enemy type, level, and stat type
+    const distributionKey = `${typeKey}_${level}_${statType}`;
+
+    // Initialize distributions object if it doesn't exist
+    if (!this.distributions) {
+      this.distributions = {};
+    }
+
     // Fully randomize distribution across 3 phases while maintaining total sum
     if (phase === 1) {
       // For phase 1, generate a random distribution for all 3 phases
-      this.currentDistribution = this.generateRandomDistribution(total);
+      this.distributions[distributionKey] = this.generateRandomDistribution(total);
     }
 
-    return this.currentDistribution[phase] || 0;
+    return this.distributions[distributionKey]?.[phase] || 0;
   }
 
   generateRandomDistribution(total) {
     if (total === 0) return { 1: 0, 2: 0, 3: 0 };
 
-    // Use a more robust algorithm that guarantees the sum equals the total
-    // First, generate two random numbers between 0 and total
-    const rand1 = Math.random();
-    const rand2 = Math.random();
+    // Generate two random numbers between 0 and total
+    const rand1 = Math.random() * total;
+    const rand2 = Math.random() * total;
 
     // Sort them to create three segments
-    const sorted = [0, rand1, rand2, 1].sort((a, b) => a - b);
+    const sorted = [0, rand1, rand2, total].sort((a, b) => a - b);
 
     // Calculate the three phase values based on the segments
-    const phase1 = Math.floor((sorted[1] - sorted[0]) * total);
-    const phase2 = Math.floor((sorted[2] - sorted[1]) * total);
+    const phase1 = Math.round(sorted[1] - sorted[0]);
+    const phase2 = Math.round(sorted[2] - sorted[1]);
     const phase3 = total - phase1 - phase2; // This ensures the sum equals total
 
     return { 1: phase1, 2: phase2, 3: phase3 };
