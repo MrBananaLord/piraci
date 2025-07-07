@@ -219,17 +219,42 @@ class FloatingDebris {
 
   generateRewards() {
     let debrisResources;
+    const rewards = [];
 
     if (this.level === 1) {
-      debrisResources = ['Owoc', 'Rum', 'Drewno'];
+      debrisResources = ['Owoc', 'Rum', 'Drewno', 'Srebro'];
     } else if (this.level === 2) {
-      debrisResources = ['Żelazo', 'Proch', 'Bawełna', 'Zboże'];
+      debrisResources = ['Żelazo', 'Proch', 'Bawełna', 'Zboże', 'Złoto'];
     } else if (this.level === 3) {
-      debrisResources = ['Postać'];
+      debrisResources = ['Postać', 'Epicka historia', 'Złoto', 'Żelazo'];
     }
 
-    const selectedResource = debrisResources[Math.floor(Math.random() * debrisResources.length)];
-    return [selectedResource];
+    // Base reward (always get something)
+    const baseResource = debrisResources[Math.floor(Math.random() * debrisResources.length)];
+    rewards.push(baseResource);
+
+    // Bonus rewards based on level
+    if (this.level >= 2) {
+      // 70% chance for second resource on level 2+
+      if (Math.random() < 0.7) {
+        const bonusResource = debrisResources[Math.floor(Math.random() * debrisResources.length)];
+        if (bonusResource !== baseResource) {
+          rewards.push(bonusResource);
+        }
+      }
+    }
+
+    if (this.level >= 3) {
+      // 50% chance for third resource on level 3
+      if (Math.random() < 0.5) {
+        const thirdResource = debrisResources[Math.floor(Math.random() * debrisResources.length)];
+        if (!rewards.includes(thirdResource)) {
+          rewards.push(thirdResource);
+        }
+      }
+    }
+
+    return rewards;
   }
 
   renderTemplate() {
