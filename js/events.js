@@ -96,7 +96,10 @@ class Enemy {
     this.name = name;
     this.level = level;
 
-    // Select random enemy type
+    // Select random enemy role (warship or merchant) for reward chances
+    this.role = Math.random() < 0.5 ? 'warship' : 'merchant';
+
+    // Select random enemy ship type for combat stats
     this.typeKey = config.getRandomEnemyType();
     this.enemyType = config.getEnemyType(this.typeKey);
 
@@ -128,9 +131,15 @@ class Enemy {
   }
 
   renderTemplate() {
+    const roleNames = {
+      'warship': 'Okręt Wojenny',
+      'merchant': 'Statek Handlowy'
+    };
+
     return `
       <h4>${this.enemyType.name}</h4>
       <p><em>${this.enemyType.description}</em></p>
+      <p><strong>Typ: ${roleNames[this.role]}</strong></p>
       <p><strong>Zdrowie: ${this.health}</strong></p>
       <div class="enemy-phases">
         ${this.stages.map((stage, i) => `
@@ -157,7 +166,7 @@ class Fight {
   constructor(level = 1) {
     this.name = "Walka!";
     this.enemy = new Enemy("Wróg", level);
-    this.rewards = new RewardsGenerator(level, this.enemy.points, this.enemy.typeKey).rewards();
+    this.rewards = new RewardsGenerator(level, this.enemy.points, this.enemy.role).rewards();
   }
 
   renderTemplate() {

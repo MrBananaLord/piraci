@@ -220,17 +220,19 @@ class ResourceChancesManager {
   renderEnemyRewardChancesContent() {
     let html = '';
 
-    // Get all enemy types
-    const enemyTypes = this.config.getAllEnemyTypes();
+    // Define the roles and their display names
+    const roles = [
+      { key: 'warship', name: 'Okręt Wojenny', description: 'Military vessels that drop combat and valuable resources' },
+      { key: 'merchant', name: 'Statek Handlowy', description: 'Trade vessels that drop commercial and basic resources' }
+    ];
 
-    enemyTypes.forEach(typeKey => {
-      const enemyType = this.config.getEnemyType(typeKey);
-      const enemyWeights = this.config.getEnemyRewardWeights(typeKey);
+    roles.forEach(role => {
+      const enemyWeights = this.config.getEnemyRewardWeights(role.key);
 
       html += `
         <div class="enemy-reward-chances-card">
-          <h3>${enemyType.name}</h3>
-          <p class="enemy-reward-description">${enemyType.description}</p>
+          <h3>${role.name}</h3>
+          <p class="enemy-reward-description">${role.description}</p>
       `;
 
       // Create sections for each deck level
@@ -244,13 +246,13 @@ class ResourceChancesManager {
             <div class="enemy-chance-resources">
         `;
 
-        // Calculate total weights for this enemy type and level
+        // Calculate total weights for this role and level
         let totalWeight = 0;
         Object.keys(enemyWeights).forEach(resourceKey => {
           totalWeight += enemyWeights[resourceKey][level] || 0;
         });
 
-        // Get all resources with their chances for this enemy type and level
+        // Get all resources with their chances for this role and level
         const resourcesWithChances = Object.entries(enemyWeights)
           .map(([resourceKey, weights]) => {
             const resource = this.config.getResourceByKey(resourceKey);
