@@ -89,13 +89,13 @@ class Enemy {
     this.typeKey = config.getRandomEnemyType();
     this.enemyType = config.getEnemyType(this.typeKey);
 
-    // Get all stages for this enemy type and level
+    // Get all stages for this enemy type and level using the new distribution system
     this.stages = [];
     for (let phase = 1; phase <= 3; phase++) {
-      const phaseData = this.enemyType.levels[level].phases[phase];
+      const stats = config.getEnemyStats(this.typeKey, level, phase);
       this.stages.push({
-        attack: phaseData.attack,
-        defence: phaseData.defence,
+        attack: stats.attack,
+        defence: stats.defence,
         phase: phase
       });
     }

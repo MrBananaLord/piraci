@@ -265,6 +265,7 @@ class EnemyOverviewManager {
 
   init() {
     this.renderEnemyOverview();
+    this.setupEventListeners();
   }
 
   renderEnemyOverview() {
@@ -298,7 +299,7 @@ class EnemyOverviewManager {
         };
 
         html += `
-          <div class="enemy-level-card">
+          <div class="enemy-level-card" data-type="${typeKey}" data-level="${level}">
             <div class="enemy-level-title">Poziom ${level}</div>
             <div class="enemy-stats">
               <div class="enemy-stat">
@@ -309,25 +310,38 @@ class EnemyOverviewManager {
                 <span class="enemy-stat-label">Punkty nagrody:</span>
                 <span class="enemy-stat-value">${levelData.rewardPoints}</span>
               </div>
+              <div class="enemy-stat">
+                <span class="enemy-stat-label">Całkowity atak:</span>
+                <span class="enemy-stat-value">${levelData.totalAttack}</span>
+              </div>
+              <div class="enemy-stat">
+                <span class="enemy-stat-label">Całkowita obrona:</span>
+                <span class="enemy-stat-value">${levelData.totalDefence}</span>
+              </div>
             </div>
             <div class="enemy-phases">
-              <div class="enemy-phases-title">Etapy walki:</div>
+              <div class="enemy-phases-title">
+                Etapy walki:
+                <button class="reroll-phases-btn" data-type="${typeKey}" data-level="${level}">
+                  🔄 Reroll
+                </button>
+              </div>
         `;
 
         // Add phases
         [1, 2, 3].forEach(phase => {
-          const phaseData = levelData.phases[phase];
+          const stats = this.config.getEnemyStats(typeKey, level, phase);
           html += `
             <div class="enemy-phase">
               <span class="enemy-phase-name">Etap ${phase}</span>
               <div class="enemy-phase-stats">
                 <div class="enemy-phase-stat">
                   <span class="enemy-phase-stat-label">Atak:</span>
-                  <span class="enemy-phase-stat-value">${phaseData.attack}</span>
+                  <span class="enemy-phase-stat-value">${stats.attack}</span>
                 </div>
                 <div class="enemy-phase-stat">
                   <span class="enemy-phase-stat-label">Obrona:</span>
-                  <span class="enemy-phase-stat-value">${phaseData.defence}</span>
+                  <span class="enemy-phase-stat-value">${stats.defence}</span>
                 </div>
               </div>
             </div>
@@ -350,6 +364,63 @@ class EnemyOverviewManager {
     });
 
     enemiesOverview.innerHTML = html;
+  }
+
+  setupEventListeners() {
+    document.addEventListener('click', (e) => {
+      if (e.target.classList.contains('reroll-phases-btn')) {
+        const typeKey = e.target.dataset.type;
+        const level = parseInt(e.target.dataset.level);
+        this.rerollPhases(typeKey, level, e.target);
+      }
+    });
+  }
+
+  rerollPhases(typeKey, level, button) {
+    // Clear the current distribution to force regeneration
+    this.config.currentDistribution = null;
+
+    // Get the enemy card
+    const enemyCard = button.closest('.enemy-level-card');
+    const phasesContainer = enemyCard.querySelector('.enemy-phases');
+
+    // Regenerate phases HTML
+    let phasesHtml = `
+      <div class="enemy-phases-title">
+        Etapy walki:
+        <button class="reroll-phases-btn" data-type="${typeKey}" data-level="${level}">
+          🔄 Reroll
+        </button>
+      </div>
+    `;
+
+    // Add phases
+    [1, 2, 3].forEach(phase => {
+      const stats = this.config.getEnemyStats(typeKey, level, phase);
+      phasesHtml += `
+        <div class="enemy-phase">
+          <span class="enemy-phase-name">Etap ${phase}</span>
+          <div class="enemy-phase-stats">
+            <div class="enemy-phase-stat">
+              <span class="enemy-phase-stat-label">Atak:</span>
+              <span class="enemy-phase-stat-value">${stats.attack}</span>
+            </div>
+            <div class="enemy-phase-stat">
+              <span class="enemy-phase-stat-label">Obrona:</span>
+              <span class="enemy-phase-stat-value">${stats.defence}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+
+    phasesContainer.innerHTML = phasesHtml;
+
+    // Add visual feedback
+    button.style.transform = 'rotate(360deg)';
+    setTimeout(() => {
+      button.style.transform = 'rotate(0deg)';
+    }, 300);
   }
 }
 

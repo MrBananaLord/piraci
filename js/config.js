@@ -7,135 +7,51 @@ class ConfigData {
 
     // Enemy ship types configuration with static values
     this.enemyTypes = {
-      heavy: {
-        name: "Okręt Liniowy",
+      warship: {
+        name: "Okręt Wojenny",
         description: "Potężny okręt z grubym pancerzem, ale powolny i niezdarny",
         levels: {
           1: {
-            health: 3,
+            health: 1,
             rewardPoints: 6,
-            phases: {
-              1: { attack: 2, defence: 1 }, // Cautious
-              2: { attack: 2, defence: 1 }, // Balanced
-              3: { attack: 3, defence: 0 }  // Aggressive
-            }
+            totalAttack: 2,
+            totalDefence: 2
           },
           2: {
             health: 6,
             rewardPoints: 12,
-            phases: {
-              1: { attack: 3, defence: 3 },
-              2: { attack: 4, defence: 2 },
-              3: { attack: 5, defence: 1 }
-            }
+            totalAttack: 12,
+            totalDefence: 6
           },
           3: {
             health: 9,
             rewardPoints: 18,
-            phases: {
-              1: { attack: 4, defence: 5 },
-              2: { attack: 5, defence: 4 },
-              3: { attack: 6, defence: 3 }
-            }
+            totalAttack: 15,
+            totalDefence: 12
           }
         }
       },
-      light: {
-        name: "Szybki Kuter",
+      merchant: {
+        name: "Statek Handlowy",
         description: "Zwinny i szybki, ale łatwy do zniszczenia",
         levels: {
           1: {
             health: 2,
             rewardPoints: 6,
-            phases: {
-              1: { attack: 0, defence: 3 }, // Defensive
-              2: { attack: 1, defence: 2 }, // Balanced
-              3: { attack: 2, defence: 1 }  // Desperate
-            }
+            totalAttack: 2,
+            totalDefence: 2
           },
           2: {
             health: 4,
             rewardPoints: 12,
-            phases: {
-              1: { attack: 1, defence: 5 },
-              2: { attack: 2, defence: 4 },
-              3: { attack: 3, defence: 3 }
-            }
+            totalAttack: 6,
+            totalDefence: 12
           },
           3: {
             health: 6,
             rewardPoints: 18,
-            phases: {
-              1: { attack: 2, defence: 7 },
-              2: { attack: 3, defence: 6 },
-              3: { attack: 4, defence: 5 }
-            }
-          }
-        }
-      },
-      average: {
-        name: "Fregata",
-        description: "Wszechstronny okręt z zrównoważonymi statystykami",
-        levels: {
-          1: {
-            health: 3,
-            rewardPoints: 6,
-            phases: {
-              1: { attack: 1, defence: 2 }, // Slightly defensive
-              2: { attack: 2, defence: 1 }, // Balanced
-              3: { attack: 2, defence: 1 }  // Slightly aggressive
-            }
-          },
-          2: {
-            health: 6,
-            rewardPoints: 12,
-            phases: {
-              1: { attack: 2, defence: 4 },
-              2: { attack: 3, defence: 3 },
-              3: { attack: 4, defence: 2 }
-            }
-          },
-          3: {
-            health: 9,
-            rewardPoints: 18,
-            phases: {
-              1: { attack: 3, defence: 6 },
-              2: { attack: 4, defence: 5 },
-              3: { attack: 5, defence: 4 }
-            }
-          }
-        }
-      },
-      destroyer: {
-        name: "Niszczyciel",
-        description: "Specjalizuje się w niszczących atakach, ale jest kruchy",
-        levels: {
-          1: {
-            health: 2,
-            rewardPoints: 6,
-            phases: {
-              1: { attack: 3, defence: 0 }, // Aggressive
-              2: { attack: 2, defence: 1 }, // Balanced
-              3: { attack: 3, defence: 0 } // Berserk
-            }
-          },
-          2: {
-            health: 4,
-            rewardPoints: 12,
-            phases: {
-              1: { attack: 5, defence: 1 },
-              2: { attack: 4, defence: 2 },
-              3: { attack: 6, defence: 0 }
-            }
-          },
-          3: {
-            health: 6,
-            rewardPoints: 18,
-            phases: {
-              1: { attack: 7, defence: 2 },
-              2: { attack: 6, defence: 3 },
-              3: { attack: 8, defence: 1 }
-            }
+            totalAttack: 9,
+            totalDefence: 18
           }
         }
       }
@@ -294,15 +210,42 @@ class ConfigData {
     const levelData = enemyType.levels[level];
     if (!levelData) return null;
 
-    const phaseData = levelData.phases[phase];
-    if (!phaseData) return null;
+    // Distribute total attack and defence across 3 phases
+    const totalAttack = levelData.totalAttack;
+    const totalDefence = levelData.totalDefence;
+
+    // Create distribution patterns for different phases
+    const attackDistribution = this.getPhaseDistribution(totalAttack, phase);
+    const defenceDistribution = this.getPhaseDistribution(totalDefence, phase);
 
     return {
       health: levelData.health,
-      attack: phaseData.attack,
-      defence: phaseData.defence,
+      attack: attackDistribution,
+      defence: defenceDistribution,
       rewardPoints: levelData.rewardPoints
     };
+  }
+
+  getPhaseDistribution(total, phase) {
+    // Fully randomize distribution across 3 phases while maintaining total sum
+    if (phase === 1) {
+      // For phase 1, generate a random distribution for all 3 phases
+      this.currentDistribution = this.generateRandomDistribution(total);
+    }
+
+    return this.currentDistribution[phase] || 0;
+  }
+
+  generateRandomDistribution(total) {
+    if (total === 0) return { 1: 0, 2: 0, 3: 0 };
+
+    // Generate random values for phases 1 and 2
+    const phase1 = Math.floor(Math.random() * (total + 1));
+    const remainingAfterPhase1 = total - phase1;
+    const phase2 = Math.floor(Math.random() * (remainingAfterPhase1 + 1));
+    const phase3 = remainingAfterPhase1 - phase2;
+
+    return { 1: phase1, 2: phase2, 3: phase3 };
   }
 
   getRandomEnemyType() {

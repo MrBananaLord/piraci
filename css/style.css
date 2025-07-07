@@ -992,7 +992,7 @@ hr {
 .enemy-stats {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 8px;
   margin-bottom: 15px;
 }
 
@@ -1024,6 +1024,31 @@ hr {
   color: #495057;
   margin-bottom: 10px;
   text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.reroll-phases-btn {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 0.8em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.reroll-phases-btn:hover {
+  background-color: #5a6268;
+  transform: scale(1.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.reroll-phases-btn:active {
+  transform: scale(0.95);
 }
 
 .enemy-phase {
