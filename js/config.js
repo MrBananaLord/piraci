@@ -7,33 +7,105 @@ class ConfigData {
 
     // Enemy ship types configuration with static values
     this.enemyTypes = {
-      warship: {
-        name: "Okręt Wojenny",
-        description: "Potężny okręt z grubym pancerzem, ale powolny i niezdarny",
+      glass_cannon: {
+        name: "Glass Cannon",
+        description: "Glass Cannon",
         levels: {
           1: {
             health: 1,
             rewardPoints: 6,
-            totalAttack: 2,
+            totalAttack: 3,
+            totalDefence: 2
+          },
+          2: {
+            health: 2,
+            rewardPoints: 12,
+            totalAttack: 6,
+            totalDefence: 4
+          },
+          3: {
+            health: 3,
+            rewardPoints: 18,
+            totalAttack: 9,
+            totalDefence: 6
+          }
+        }
+      },
+      ironclad: {
+        name: "Ironclad",
+        description: "Ironclad",
+        levels: {
+          1: {
+            health: 3,
+            rewardPoints: 6,
+            totalAttack: 1,
             totalDefence: 2
           },
           2: {
             health: 6,
             rewardPoints: 12,
-            totalAttack: 12,
-            totalDefence: 6
+            totalAttack: 2,
+            totalDefence: 4
           },
           3: {
             health: 9,
             rewardPoints: 18,
-            totalAttack: 15,
-            totalDefence: 12
+            totalAttack: 3,
+            totalDefence: 6
           }
         }
       },
-      merchant: {
-        name: "Statek Handlowy",
-        description: "Zwinny i szybki, ale łatwy do zniszczenia",
+      destroyer: {
+        name: "Destroyer",
+        description: "Destroyer",
+        levels: {
+          1: {
+            health: 2,
+            rewardPoints: 6,
+            totalAttack: 3,
+            totalDefence: 1
+          },
+          2: {
+            health: 4,
+            rewardPoints: 12,
+            totalAttack: 6,
+            totalDefence: 2
+          },
+          3: {
+            health: 6,
+            rewardPoints: 18,
+            totalAttack: 9,
+            totalDefence: 3
+          }
+        }
+      },
+      cruiser: {
+        name: "Cruiser",
+        description: "Cruiser",
+        levels: {
+          1: {
+            health: 2,
+            rewardPoints: 6,
+            totalAttack: 1,
+            totalDefence: 3
+          },
+          2: {
+            health: 4,
+            rewardPoints: 12,
+            totalAttack: 2,
+            totalDefence: 6
+          },
+          3: {
+            health: 6,
+            rewardPoints: 18,
+            totalAttack: 3,
+            totalDefence: 9
+          }
+        }
+      },
+      dreadnought: {
+        name: "Dreadnought",
+        description: "Dreadnought",
         levels: {
           1: {
             health: 2,
@@ -44,14 +116,14 @@ class ConfigData {
           2: {
             health: 4,
             rewardPoints: 12,
-            totalAttack: 6,
-            totalDefence: 12
+            totalAttack: 4,
+            totalDefence: 4
           },
           3: {
             health: 6,
             rewardPoints: 18,
-            totalAttack: 9,
-            totalDefence: 18
+            totalAttack: 6,
+            totalDefence: 6
           }
         }
       }
