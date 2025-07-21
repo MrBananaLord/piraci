@@ -233,43 +233,11 @@ class Exploration {
   }
 
   generateRewards() {
-    let explorationResources;
-    const rewards = [];
+    // Calculate reward points based on level: 3, 6, 9
+    const rewardPoints = this.level * 3;
 
-    if (this.level === 1) {
-      explorationResources = ['Owoc', 'Rum', 'Drewno', 'Srebro'];
-    } else if (this.level === 2) {
-      explorationResources = ['Żelazo', 'Proch', 'Bawełna', 'Zboże', 'Złoto'];
-    } else if (this.level === 3) {
-      explorationResources = ['Postać', 'Epicka historia', 'Złoto', 'Żelazo'];
-    }
-
-    // Base reward (always get something)
-    const baseResource = explorationResources[Math.floor(Math.random() * explorationResources.length)];
-    rewards.push(baseResource);
-
-    // Bonus rewards based on level
-    if (this.level >= 2) {
-      // 70% chance for second resource on level 2+
-      if (Math.random() < 0.7) {
-        const bonusResource = explorationResources[Math.floor(Math.random() * explorationResources.length)];
-        if (bonusResource !== baseResource) {
-          rewards.push(bonusResource);
-        }
-      }
-    }
-
-    if (this.level >= 3) {
-      // 50% chance for third resource on level 3
-      if (Math.random() < 0.5) {
-        const thirdResource = explorationResources[Math.floor(Math.random() * explorationResources.length)];
-        if (!rewards.includes(thirdResource)) {
-          rewards.push(thirdResource);
-        }
-      }
-    }
-
-    return rewards;
+    // Use RewardsGenerator to get rewards worth exactly the calculated points
+    return new RewardsGenerator(this.level, rewardPoints).rewards();
   }
 
   renderTemplate() {
