@@ -119,7 +119,7 @@ class Enemy {
 
     // Get base stats for health and reward points
     this.health = this.enemyType.levels[level].health;
-    this.points = this.enemyType.levels[level].rewardPoints;
+    this.points = this.calculateRewardPoints();
   }
 
   shuffleStages() {
@@ -128,6 +128,12 @@ class Enemy {
       const j = Math.floor(Math.random() * (i + 1));
       [this.stages[i], this.stages[j]] = [this.stages[j], this.stages[i]];
     }
+  }
+
+  calculateRewardPoints() {
+    // Calculate reward points using the formula: 2*hp + defence + 0.5*attack
+    const levelData = this.enemyType.levels[this.level];
+    return 2 * levelData.health + levelData.totalDefence + 0.5 * levelData.totalAttack;
   }
 
   renderTemplate() {
@@ -210,34 +216,43 @@ class Island {
   }
 }
 
-class FloatingDebris {
+class Exploration {
   constructor(level = 1) {
-    this.name = "Pływające śmieci";
+    this.name = "Eksploracja";
     this.level = level;
+    this.targetCoordinates = this.generateTargetCoordinates();
     this.rewards = this.generateRewards();
   }
 
+  generateTargetCoordinates() {
+    // Generate random coordinates for exploration target
+    const x = Math.floor(Math.random() * 100) - 50; // -50 to 49
+    const y = Math.floor(Math.random() * 100) - 50; // -50 to 49
+
+    return { x, y };
+  }
+
   generateRewards() {
-    let debrisResources;
+    let explorationResources;
     const rewards = [];
 
     if (this.level === 1) {
-      debrisResources = ['Owoc', 'Rum', 'Drewno', 'Srebro'];
+      explorationResources = ['Owoc', 'Rum', 'Drewno', 'Srebro'];
     } else if (this.level === 2) {
-      debrisResources = ['Żelazo', 'Proch', 'Bawełna', 'Zboże', 'Złoto'];
+      explorationResources = ['Żelazo', 'Proch', 'Bawełna', 'Zboże', 'Złoto'];
     } else if (this.level === 3) {
-      debrisResources = ['Postać', 'Epicka historia', 'Złoto', 'Żelazo'];
+      explorationResources = ['Postać', 'Epicka historia', 'Złoto', 'Żelazo'];
     }
 
     // Base reward (always get something)
-    const baseResource = debrisResources[Math.floor(Math.random() * debrisResources.length)];
+    const baseResource = explorationResources[Math.floor(Math.random() * explorationResources.length)];
     rewards.push(baseResource);
 
     // Bonus rewards based on level
     if (this.level >= 2) {
       // 70% chance for second resource on level 2+
       if (Math.random() < 0.7) {
-        const bonusResource = debrisResources[Math.floor(Math.random() * debrisResources.length)];
+        const bonusResource = explorationResources[Math.floor(Math.random() * explorationResources.length)];
         if (bonusResource !== baseResource) {
           rewards.push(bonusResource);
         }
@@ -247,7 +262,7 @@ class FloatingDebris {
     if (this.level >= 3) {
       // 50% chance for third resource on level 3
       if (Math.random() < 0.5) {
-        const thirdResource = debrisResources[Math.floor(Math.random() * debrisResources.length)];
+        const thirdResource = explorationResources[Math.floor(Math.random() * explorationResources.length)];
         if (!rewards.includes(thirdResource)) {
           rewards.push(thirdResource);
         }
@@ -258,10 +273,15 @@ class FloatingDebris {
   }
 
   renderTemplate() {
+    const coordText = this.targetCoordinates.x >= 0 && this.targetCoordinates.y >= 0
+      ? `+${this.targetCoordinates.x}, +${this.targetCoordinates.y}`
+      : `${this.targetCoordinates.x}, ${this.targetCoordinates.y}`;
+
     return `
       <h3>${this.name}</h3>
-      <p>Widzisz pływające śmieci na powierzchni wody. Może znajdziesz coś użytecznego.</p>
-      <h4>Znalezione przedmioty</h4> 
+      <p>Odkryłeś tajemnicze współrzędne na mapie: <strong>${coordText}</strong></p>
+      <p>Wyprawa eksploracyjna może przynieść cenne znaleziska.</p>
+      <h4>Odkryte zasoby</h4> 
       <div class="rewards-display">
         ${renderResourceSymbols(this.rewards)}
       </div>
@@ -302,7 +322,7 @@ class Event {
     // 70% chance for Fight event
     const random = Math.random();
     if (random < 0.15) {
-      this.action = new FloatingDebris(level);
+      this.action = new Exploration(level);
     } else if (random < 0.30) {
       this.action = new Island(level);
     } else {

@@ -407,6 +407,9 @@ class EnemyOverviewManager {
           3: "Agresywny"
         };
 
+        // Calculate reward points using the formula: 2*hp + defence + 0.5*attack
+        const rewardPoints = 2 * levelData.health + levelData.totalDefence + 0.5 * levelData.totalAttack;
+
         html += `
           <div class="enemy-level-card" data-type="${typeKey}" data-level="${level}">
             <div class="enemy-level-title">Poziom ${level}</div>
@@ -417,7 +420,7 @@ class EnemyOverviewManager {
               </div>
               <div class="enemy-stat">
                 <span class="enemy-stat-label">Punkty nagrody:</span>
-                <span class="enemy-stat-value">${levelData.rewardPoints}</span>
+                <span class="enemy-stat-value">${rewardPoints}</span>
               </div>
               <div class="enemy-stat">
                 <span class="enemy-stat-label">Całkowity atak:</span>
@@ -460,7 +463,7 @@ class EnemyOverviewManager {
         html += `
             </div>
             <div class="reward-points">
-              Nagroda: ${levelData.rewardPoints} punktów
+              Nagroda: ${rewardPoints} punktów
             </div>
           </div>
         `;

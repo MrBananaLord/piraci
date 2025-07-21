@@ -13,21 +13,18 @@ class ConfigData {
         levels: {
           1: {
             health: 1,
-            rewardPoints: 6,
             totalAttack: 3,
-            totalDefence: 2
+            totalDefence: 0
           },
           2: {
             health: 2,
-            rewardPoints: 12,
             totalAttack: 6,
-            totalDefence: 4
+            totalDefence: 1
           },
           3: {
             health: 3,
-            rewardPoints: 18,
             totalAttack: 9,
-            totalDefence: 6
+            totalDefence: 2
           }
         }
       },
@@ -36,22 +33,19 @@ class ConfigData {
         description: "Ironclad",
         levels: {
           1: {
-            health: 3,
-            rewardPoints: 6,
+            health: 2,
             totalAttack: 1,
-            totalDefence: 2
+            totalDefence: 0
           },
           2: {
-            health: 6,
-            rewardPoints: 12,
+            health: 4,
             totalAttack: 2,
-            totalDefence: 4
+            totalDefence: 1
           },
           3: {
-            health: 9,
-            rewardPoints: 18,
+            health: 6,
             totalAttack: 3,
-            totalDefence: 6
+            totalDefence: 2
           }
         }
       },
@@ -60,21 +54,18 @@ class ConfigData {
         description: "Destroyer",
         levels: {
           1: {
-            health: 2,
-            rewardPoints: 6,
-            totalAttack: 3,
+            health: 1,
+            totalAttack: 2,
             totalDefence: 1
           },
           2: {
-            health: 4,
-            rewardPoints: 12,
-            totalAttack: 6,
+            health: 2,
+            totalAttack: 4,
             totalDefence: 2
           },
           3: {
-            health: 6,
-            rewardPoints: 18,
-            totalAttack: 9,
+            health: 3,
+            totalAttack: 6,
             totalDefence: 3
           }
         }
@@ -84,22 +75,19 @@ class ConfigData {
         description: "Cruiser",
         levels: {
           1: {
-            health: 2,
-            rewardPoints: 6,
+            health: 1,
             totalAttack: 1,
             totalDefence: 3
           },
           2: {
-            health: 4,
-            rewardPoints: 12,
+            health: 2,
             totalAttack: 2,
             totalDefence: 6
           },
           3: {
-            health: 6,
-            rewardPoints: 18,
+            health: 3,
             totalAttack: 3,
-            totalDefence: 9
+            totalDefence: 6
           }
         }
       },
@@ -108,22 +96,19 @@ class ConfigData {
         description: "Dreadnought",
         levels: {
           1: {
+            health: 1,
+            totalAttack: 1,
+            totalDefence: 1
+          },
+          2: {
             health: 2,
-            rewardPoints: 6,
             totalAttack: 2,
             totalDefence: 2
           },
-          2: {
-            health: 4,
-            rewardPoints: 12,
-            totalAttack: 4,
-            totalDefence: 4
-          },
           3: {
-            health: 6,
-            rewardPoints: 18,
-            totalAttack: 6,
-            totalDefence: 6
+            health: 3,
+            totalAttack: 3,
+            totalDefence: 3
           }
         }
       }
@@ -322,11 +307,14 @@ class ConfigData {
     const attackDistribution = this.getPhaseDistribution(totalAttack, phase, typeKey, level, 'attack');
     const defenceDistribution = this.getPhaseDistribution(totalDefence, phase, typeKey, level, 'defence');
 
+    // Calculate reward points based on the formula: 2*hp + defence + 0.5*attack
+    const rewardPoints = 2 * levelData.health + totalDefence + 0.5 * totalAttack;
+
     return {
       health: levelData.health,
       attack: attackDistribution,
       defence: defenceDistribution,
-      rewardPoints: levelData.rewardPoints
+      rewardPoints: rewardPoints
     };
   }
 
