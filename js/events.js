@@ -218,7 +218,9 @@ class Island {
 
 class Exploration {
   constructor(level = 1) {
-    this.name = "Eksploracja";
+    const kinds = ["Mapa Skarbu", "List Kaperski", "Konwój"];
+    this.kind = kinds[Math.floor(Math.random() * kinds.length)];
+    this.name = this.kind;
     this.level = level;
     this.targetCoordinates = this.generateTargetCoordinates();
     this.rewards = this.generateRewards();
@@ -226,17 +228,17 @@ class Exploration {
 
   generateTargetCoordinates() {
     // Generate random coordinates for exploration target
-    const x = Math.floor(Math.random() * 100) - 50; // -50 to 49
-    const y = Math.floor(Math.random() * 100) - 50; // -50 to 49
+    const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
+    const numbers = [1, 2, 3, 4, 5, 6, 7, 8];
+    const x = letters[Math.floor(Math.random() * letters.length)];
+    const y = numbers[Math.floor(Math.random() * numbers.length)];
 
     return { x, y };
   }
 
   generateRewards() {
-    // Calculate reward points based on level: 3, 6, 9
-    const rewardPoints = this.level * 3;
+    const rewardPoints = this.level * 5;
 
-    // Use RewardsGenerator to get rewards worth exactly the calculated points
     return new RewardsGenerator(this.level, rewardPoints).rewards();
   }
 
@@ -249,7 +251,7 @@ class Exploration {
       <h3>${this.name}</h3>
       <p>Odkryłeś tajemnicze współrzędne na mapie: <strong>${coordText}</strong></p>
       <p>Wyprawa eksploracyjna może przynieść cenne znaleziska.</p>
-      <h4>Odkryte zasoby</h4> 
+      <h4>Nagroda</h4> 
       <div class="rewards-display">
         ${renderResourceSymbols(this.rewards)}
       </div>
@@ -284,15 +286,11 @@ class Event {
   constructor(level = 1) {
     this.level = level;
 
-    // Event type probabilities:
-    // 15% chance for FloatingDebris event
-    // 15% chance for Island event  
-    // 70% chance for Fight event
     const random = Math.random();
-    if (random < 0.15) {
-      this.action = new Exploration(level);
-    } else if (random < 0.30) {
+    if (random < 0.1) {
       this.action = new Island(level);
+    } else if (random < 0.5) {
+      this.action = new Exploration(level);
     } else {
       this.action = new Fight(level);
     }
@@ -314,5 +312,4 @@ class Event {
   }
 }
 
-// Initialize the event system
 const eventSystem = new EventSystem();
