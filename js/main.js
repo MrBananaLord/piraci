@@ -559,7 +559,7 @@ class CardStorageManager {
     if (eventDeck) {
       // Create container for buttons
       const buttonContainer = document.createElement('div');
-      buttonContainer.style.marginTop = '15px';
+      buttonContainer.style.marginBottom = '15px';
       buttonContainer.style.display = 'flex';
       buttonContainer.style.gap = '10px';
       buttonContainer.style.justifyContent = 'center';
@@ -590,12 +590,13 @@ class CardStorageManager {
       buttonContainer.appendChild(statsButton);
       buttonContainer.appendChild(clearButton);
 
-      // Insert after the draw card buttons
+      // Insert before the draw card buttons
       const drawButtons = eventDeck.querySelectorAll('.draw-card');
       if (drawButtons.length > 0) {
-        drawButtons[0].parentNode.insertBefore(buttonContainer, drawButtons[0].nextSibling);
+        drawButtons[0].parentNode.insertBefore(buttonContainer, drawButtons[0]);
       } else {
-        eventDeck.appendChild(buttonContainer);
+        // If no draw buttons, insert at the beginning of the event deck
+        eventDeck.insertBefore(buttonContainer, eventDeck.firstChild);
       }
     }
   }
