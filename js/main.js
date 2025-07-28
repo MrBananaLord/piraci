@@ -408,7 +408,7 @@ class EnemyOverviewManager {
         };
 
         // Calculate reward points using the formula: 2*hp + defence + 0.5*attack
-        const rewardPoints = 2 * levelData.health + levelData.totalDefence + 0.5 * levelData.totalAttack;
+        const rewardPoints = new Enemy(enemyType.name, level).calculateRewardPoints();
 
         html += `
           <div class="enemy-level-card" data-type="${typeKey}" data-level="${level}">

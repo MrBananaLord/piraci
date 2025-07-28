@@ -131,9 +131,8 @@ class Enemy {
   }
 
   calculateRewardPoints() {
-    // Calculate reward points using the formula: 2*hp + defence + 0.5*attack
     const levelData = this.enemyType.levels[this.level];
-    return 2 * levelData.health + levelData.totalDefence + 0.5 * levelData.totalAttack;
+    return levelData.health + levelData.totalDefence + 0.5 * levelData.totalAttack * 0.5;
   }
 
   renderTemplate() {
@@ -237,7 +236,7 @@ class Exploration {
   }
 
   generateRewards() {
-    const rewardPoints = this.level * 5;
+    const rewardPoints = this.level * 4;
 
     return new RewardsGenerator(this.level, rewardPoints).rewards();
   }

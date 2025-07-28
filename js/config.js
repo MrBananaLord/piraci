@@ -154,7 +154,7 @@ class ConfigData {
         color: "#8D6E63",
         symbol: "wood",
         weight: {
-          1: 1,
+          1: 0,
           2: 2,
           3: 1
         }
@@ -209,7 +209,7 @@ class ConfigData {
         color: "#F44336",
         symbol: "fruit",
         weight: {
-          1: 1,
+          1: 0,
           2: 1,
           3: 1
         }
@@ -220,7 +220,7 @@ class ConfigData {
         color: "#4CAF50",
         symbol: "rum",
         weight: {
-          1: 1,
+          1: 2,
           2: 1,
           3: 1
         }
@@ -241,31 +241,29 @@ class ConfigData {
     // Enemy-specific reward weights
     this.enemyRewardWeights = {
       warship: {
-        // Warships drop military and valuable resources
-        epic_story: { 1: 0, 2: 0, 3: 8 },
-        character: { 1: 0, 2: 4, 3: 6 },
-        gold: { 1: 2, 2: 3, 3: 2 },
-        wood: { 1: 1, 2: 1, 3: 1 },
-        grain: { 1: 0, 2: 1, 3: 2 },
-        gunpowder: { 1: 0, 2: 3, 3: 4 },
-        iron: { 1: 0, 2: 2, 3: 3 },
-        cotton: { 1: 0, 2: 1, 3: 1 },
+        epic_story: { 1: 0, 2: 0, 3: 5 },
+        character: { 1: 0, 2: 2, 3: 4 },
+        gold: { 1: 2, 2: 1, 3: 0 },
+        wood: { 1: 4, 2: 3, 3: 2 },
+        grain: { 1: 0, 2: 0, 3: 0 },
+        gunpowder: { 1: 1, 2: 4, 3: 3 },
+        iron: { 1: 1, 2: 4, 3: 3 },
+        cotton: { 1: 0, 2: 0, 3: 0 },
         fruit: { 1: 0, 2: 0, 3: 0 },
-        rum: { 1: 0, 2: 1, 3: 1 },
-        silver: { 1: 1, 2: 2, 3: 2 }
+        rum: { 1: 3, 2: 1, 3: 0 },
+        silver: { 1: 2, 2: 1, 3: 0 }
       },
       merchant: {
-        // Merchant ships drop trade goods and basic resources
-        epic_story: { 1: 0, 2: 0, 3: 2 },
-        character: { 1: 0, 2: 1, 3: 2 },
-        gold: { 1: 4, 2: 3, 3: 2 },
-        wood: { 1: 3, 2: 4, 3: 3 },
-        grain: { 1: 2, 2: 3, 3: 4 },
-        gunpowder: { 1: 0, 2: 0, 3: 1 },
-        iron: { 1: 0, 2: 1, 3: 2 },
-        cotton: { 1: 2, 2: 3, 3: 4 },
-        fruit: { 1: 3, 2: 2, 3: 1 },
-        rum: { 1: 2, 2: 3, 3: 2 },
+        epic_story: { 1: 0, 2: 0, 3: 5 },
+        character: { 1: 0, 2: 2, 3: 4 },
+        gold: { 1: 4, 2: 2, 3: 1 },
+        wood: { 1: 2, 2: 1, 3: 0 },
+        grain: { 1: 1, 2: 3, 3: 3 },
+        gunpowder: { 1: 0, 2: 0, 3: 0 },
+        iron: { 1: 0, 2: 0, 3: 0 },
+        cotton: { 1: 1, 2: 3, 3: 3 },
+        fruit: { 1: 2, 2: 1, 3: 0 },
+        rum: { 1: 0, 2: 0, 3: 0 },
         silver: { 1: 3, 2: 2, 3: 1 }
       }
     };
