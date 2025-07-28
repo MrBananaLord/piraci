@@ -92,15 +92,15 @@ class RewardsGenerator {
 }
 
 class Enemy {
-  constructor(name, level) {
+  constructor(name, level, enemyTypeKey = null) {
     this.name = name;
     this.level = level;
 
     // Select random enemy role (warship or merchant) for reward chances
     this.role = Math.random() < 0.5 ? 'warship' : 'merchant';
 
-    // Select random enemy ship type for combat stats
-    this.typeKey = config.getRandomEnemyType();
+    // Use provided enemy type key or select random enemy ship type for combat stats
+    this.typeKey = enemyTypeKey || config.getRandomEnemyType();
     this.enemyType = config.getEnemyType(this.typeKey);
 
     // Get all stages for this enemy type and level using the new distribution system

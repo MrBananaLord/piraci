@@ -341,7 +341,7 @@ class EventManager {
     this.currentEventDiv = document.getElementById("current-event");
     this.eventLogDiv = document.getElementById("event-log");
     this.eventSystem = eventSystem;
-    this.cardStorage = new CardStorageManager();
+    this.cardStorage = new CardStorageManager(config);
 
     this.init();
   }
@@ -411,8 +411,9 @@ class EnemyOverviewManager {
           3: "Agresywny"
         };
 
-        // Calculate reward points using the formula: 2*hp + defence + 0.5*attack
-        const rewardPoints = new Enemy(enemyType.name, level).calculateRewardPoints();
+        // Create Enemy instance with specific type key to get consistent reward points
+        const enemy = new Enemy(enemyType.name, level, typeKey);
+        const rewardPoints = enemy.points;
 
         html += `
           <div class="enemy-level-card" data-type="${typeKey}" data-level="${level}">
@@ -544,7 +545,8 @@ class EnemyOverviewManager {
 }
 
 class CardStorageManager {
-  constructor() {
+  constructor(config) {
+    this.config = config;
     this.storageKey = 'piraci_drawn_cards';
     this.init();
   }
@@ -696,9 +698,16 @@ class CardStorageManager {
 
       // Calculate reward points based on event type
       if (card.eventType === 'Fight') {
-        rewardPoints = card.details.enemyHealth ? (2 * card.details.enemyHealth + 0.5 * 10 + 5).toFixed(1) : '';
+        if (card.details.enemyHealth) {
+          // Use the helper function for consistent calculation
+          rewardPoints = this.config.calculateRewardPoints(
+            card.details.enemyHealth,
+            5, // Default defence value
+            10  // Default attack value
+          ).toFixed(1);
+        }
       } else if (card.eventType === 'Exploration') {
-        rewardPoints = (card.level * 4).toString();
+        rewardPoints = (card.level * 3).toString(); // 3, 6, 9 based on level
       } else if (card.eventType === 'Island') {
         rewardPoints = '1'; // Standard island reward
       }
@@ -832,9 +841,16 @@ class CardStorageManager {
       // Reward points calculation
       let points = 0;
       if (card.eventType === 'Fight') {
-        points = card.details.enemyHealth ? (2 * card.details.enemyHealth + 0.5 * 10 + 5) : 0;
+        if (card.details.enemyHealth) {
+          // Use the helper function for consistent calculation
+          points = this.config.calculateRewardPoints(
+            card.details.enemyHealth,
+            5, // Default defence value
+            10  // Default attack value
+          );
+        }
       } else if (card.eventType === 'Exploration') {
-        points = card.level * 4;
+        points = card.level * 3; // 3, 6, 9 based on level
       } else if (card.eventType === 'Island') {
         points = 1;
       }

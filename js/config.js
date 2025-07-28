@@ -306,7 +306,7 @@ class ConfigData {
     const defenceDistribution = this.getPhaseDistribution(totalDefence, phase, typeKey, level, 'defence');
 
     // Calculate reward points based on the formula: 2*hp + defence + 0.5*attack
-    const rewardPoints = 2 * levelData.health + totalDefence + 0.5 * totalAttack;
+    const rewardPoints = this.calculateRewardPoints(levelData.health, totalDefence, totalAttack);
 
     return {
       health: levelData.health,
@@ -364,6 +364,10 @@ class ConfigData {
   getResourceWeightForEnemy(resourceKey, enemyType, level) {
     const enemyWeights = this.getEnemyRewardWeights(enemyType);
     return enemyWeights[resourceKey]?.[level] || 0;
+  }
+
+  calculateRewardPoints(health, defence, attack) {
+    return 2 * health + defence + 0.5 * attack;
   }
 
   getResourceSymbol(symbolType) {
