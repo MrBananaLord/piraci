@@ -132,7 +132,7 @@ class Enemy {
 
   calculateRewardPoints() {
     const levelData = this.enemyType.levels[this.level];
-    return levelData.health + levelData.totalDefence + 0.5 * levelData.totalAttack * 0.5;
+    return 3 * this.level + levelData.health / 2;
   }
 
   renderTemplate() {

@@ -17,12 +17,12 @@ class ConfigData {
             totalDefence: 0
           },
           2: {
-            health: 2,
+            health: 3,
             totalAttack: 6,
             totalDefence: 1
           },
           3: {
-            health: 4,
+            health: 6,
             totalAttack: 12,
             totalDefence: 3
           }
@@ -43,8 +43,8 @@ class ConfigData {
             totalDefence: 1
           },
           3: {
-            health: 8,
-            totalAttack: 4,
+            health: 9,
+            totalAttack: 6,
             totalDefence: 3
           }
         }
@@ -59,14 +59,14 @@ class ConfigData {
             totalDefence: 1
           },
           2: {
-            health: 2,
+            health: 3,
             totalAttack: 4,
             totalDefence: 2
           },
           3: {
-            health: 4,
-            totalAttack: 8,
-            totalDefence: 4
+            health: 6,
+            totalAttack: 9,
+            totalDefence: 3
           }
         }
       },
@@ -80,14 +80,14 @@ class ConfigData {
             totalDefence: 3
           },
           2: {
-            health: 2,
+            health: 3,
             totalAttack: 2,
             totalDefence: 6
           },
           3: {
-            health: 4,
-            totalAttack: 4,
-            totalDefence: 8
+            health: 6,
+            totalAttack: 3,
+            totalDefence: 9
           }
         }
       },
@@ -101,14 +101,14 @@ class ConfigData {
             totalDefence: 1
           },
           2: {
-            health: 2,
-            totalAttack: 2,
-            totalDefence: 2
+            health: 3,
+            totalAttack: 3,
+            totalDefence: 3
           },
           3: {
-            health: 5,
-            totalAttack: 5,
-            totalDefence: 5
+            health: 6,
+            totalAttack: 6,
+            totalDefence: 6
           }
         }
       }
