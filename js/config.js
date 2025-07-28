@@ -123,7 +123,7 @@ class ConfigData {
         weight: {
           1: 0,
           2: 0,
-          3: 16
+          3: 1
         }
       },
       character: {
@@ -133,8 +133,8 @@ class ConfigData {
         symbol: "character",
         weight: {
           1: 0,
-          2: 2,
-          3: 4
+          2: 3,
+          3: 3
         }
       },
       gold: {
@@ -144,8 +144,8 @@ class ConfigData {
         symbol: "gold",
         weight: {
           1: 3,
-          2: 2,
-          3: 1
+          2: 3,
+          3: 3
         }
       },
       wood: {
@@ -155,8 +155,8 @@ class ConfigData {
         symbol: "wood",
         weight: {
           1: 0,
-          2: 2,
-          3: 1
+          2: 0,
+          3: 0
         }
       },
       grain: {
@@ -166,8 +166,8 @@ class ConfigData {
         symbol: "grain",
         weight: {
           1: 0,
-          2: 1,
-          3: 2
+          2: 0,
+          3: 0
         }
       },
       gunpowder: {
@@ -177,8 +177,8 @@ class ConfigData {
         symbol: "gunpowder",
         weight: {
           1: 0,
-          2: 1,
-          3: 2
+          2: 0,
+          3: 0
         }
       },
       iron: {
@@ -188,8 +188,8 @@ class ConfigData {
         symbol: "iron",
         weight: {
           1: 0,
-          2: 1,
-          3: 2
+          2: 0,
+          3: 0
         }
       },
       cotton: {
@@ -199,8 +199,8 @@ class ConfigData {
         symbol: "cotton",
         weight: {
           1: 0,
-          2: 1,
-          3: 2
+          2: 0,
+          3: 0
         }
       },
       fruit: {
@@ -210,8 +210,8 @@ class ConfigData {
         symbol: "fruit",
         weight: {
           1: 0,
-          2: 1,
-          3: 1
+          2: 0,
+          3: 0
         }
       },
       rum: {
@@ -221,7 +221,7 @@ class ConfigData {
         symbol: "rum",
         weight: {
           1: 2,
-          2: 1,
+          2: 2,
           3: 1
         }
       },

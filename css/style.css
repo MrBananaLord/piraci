@@ -660,6 +660,76 @@ hr {
   margin: 20px 0;
 }
 
+/* Download button styling */
+#download-cards-csv {
+  background-color: #27ae60 !important;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  font-weight: 500;
+  transition: background-color 0.2s, transform 0.1s;
+  cursor: pointer;
+}
+
+#download-cards-csv:hover {
+  background-color: #229954 !important;
+  transform: translateY(-1px);
+}
+
+#download-cards-csv:active {
+  transform: translateY(0);
+}
+
+/* Clear button styling */
+#clear-cards-data {
+  background-color: #e74c3c !important;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  font-weight: 500;
+  transition: background-color 0.2s, transform 0.1s;
+  cursor: pointer;
+}
+
+#clear-cards-data:hover {
+  background-color: #c0392b !important;
+  transform: translateY(-1px);
+}
+
+#clear-cards-data:active {
+  transform: translateY(0);
+}
+
+/* Statistics button styling */
+#show-cards-stats {
+  background-color: #9b59b6 !important;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  font-weight: 500;
+  transition: background-color 0.2s, transform 0.1s;
+  cursor: pointer;
+}
+
+#show-cards-stats:hover {
+  background-color: #8e44ad !important;
+  transform: translateY(-1px);
+}
+
+#show-cards-stats:active {
+  transform: translateY(0);
+}
+
+/* Card count display */
+.card-count {
+  font-size: 0.9em;
+  color: #666;
+  margin-top: 5px;
+}
+
 /* Resource Chances Display */
 #resources-content {
   display: flex;

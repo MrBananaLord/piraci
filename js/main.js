@@ -341,6 +341,7 @@ class EventManager {
     this.currentEventDiv = document.getElementById("current-event");
     this.eventLogDiv = document.getElementById("event-log");
     this.eventSystem = eventSystem;
+    this.cardStorage = new CardStorageManager();
 
     this.init();
   }
@@ -350,6 +351,9 @@ class EventManager {
       button.addEventListener("click", (element) => {
         const level = parseInt(element.target.getAttribute("data-level"));
         const event = this.eventSystem.createEvent(level);
+
+        // Store the card data
+        this.cardStorage.storeCard(event);
 
         if (this.currentEventDiv.innerHTML.trim() !== "") {
           this.eventLogDiv.innerHTML = this.currentEventDiv.innerHTML + this.eventLogDiv.innerHTML;
@@ -539,10 +543,427 @@ class EnemyOverviewManager {
   }
 }
 
+class CardStorageManager {
+  constructor() {
+    this.storageKey = 'piraci_drawn_cards';
+    this.init();
+  }
+
+  init() {
+    // Add download button to the UI
+    this.addDownloadButton();
+  }
+
+  addDownloadButton() {
+    const eventDeck = document.getElementById('event-deck');
+    if (eventDeck) {
+      // Create container for buttons
+      const buttonContainer = document.createElement('div');
+      buttonContainer.style.marginTop = '15px';
+      buttonContainer.style.display = 'flex';
+      buttonContainer.style.gap = '10px';
+      buttonContainer.style.justifyContent = 'center';
+      buttonContainer.style.flexWrap = 'wrap';
+
+      // Download button
+      const downloadButton = document.createElement('button');
+      downloadButton.id = 'download-cards-csv';
+      downloadButton.textContent = '📊 Pobierz statystyki kart (CSV)';
+      downloadButton.addEventListener('click', () => this.downloadCardsCSV());
+
+      // Clear data button
+      const clearButton = document.createElement('button');
+      clearButton.id = 'clear-cards-data';
+      clearButton.textContent = '🗑️ Wyczyść dane kart';
+      clearButton.style.backgroundColor = '#e74c3c';
+      clearButton.addEventListener('click', () => this.clearStoredCardsWithConfirm());
+
+      // Statistics button
+      const statsButton = document.createElement('button');
+      statsButton.id = 'show-cards-stats';
+      statsButton.textContent = '📈 Pokaż statystyki';
+      statsButton.style.backgroundColor = '#9b59b6';
+      statsButton.addEventListener('click', () => this.showStatistics());
+
+      // Add buttons to container
+      buttonContainer.appendChild(downloadButton);
+      buttonContainer.appendChild(statsButton);
+      buttonContainer.appendChild(clearButton);
+
+      // Insert after the draw card buttons
+      const drawButtons = eventDeck.querySelectorAll('.draw-card');
+      if (drawButtons.length > 0) {
+        drawButtons[0].parentNode.insertBefore(buttonContainer, drawButtons[0].nextSibling);
+      } else {
+        eventDeck.appendChild(buttonContainer);
+      }
+    }
+  }
+
+  storeCard(event) {
+    const cardData = this.extractCardData(event);
+    const storedCards = this.getStoredCards();
+    storedCards.push(cardData);
+    this.saveCards(storedCards);
+  }
+
+  extractCardData(event) {
+    const cardData = {
+      timestamp: new Date().toISOString(),
+      level: event.level,
+      eventType: this.getEventType(event.action),
+      eventName: event.action.name || event.action.kind || 'Unknown',
+      rewards: this.extractRewards(event.action),
+      details: this.extractDetails(event.action)
+    };
+
+    return cardData;
+  }
+
+  getEventType(action) {
+    if (action instanceof Fight) return 'Fight';
+    if (action instanceof Island) return 'Island';
+    if (action instanceof Exploration) return 'Exploration';
+    return 'Unknown';
+  }
+
+  extractRewards(action) {
+    if (action.rewards && Array.isArray(action.rewards)) {
+      return action.rewards.join(', ');
+    }
+    return '';
+  }
+
+  extractDetails(action) {
+    const details = {};
+
+    if (action instanceof Fight) {
+      details.enemyType = action.enemy.enemyType.name;
+      details.enemyRole = action.enemy.role;
+      details.enemyHealth = action.enemy.health;
+      details.enemyStages = action.enemy.stages.map(stage =>
+        `Phase ${stage.phase}: Atk ${stage.attack}, Def ${stage.defence}`
+      ).join('; ');
+    } else if (action instanceof Exploration) {
+      details.coordinates = `${action.targetCoordinates.x}, ${action.targetCoordinates.y}`;
+    } else if (action instanceof Island) {
+      details.islandType = 'Standard Island';
+    }
+
+    return details;
+  }
+
+  getStoredCards() {
+    const stored = localStorage.getItem(this.storageKey);
+    return stored ? JSON.parse(stored) : [];
+  }
+
+  saveCards(cards) {
+    localStorage.setItem(this.storageKey, JSON.stringify(cards));
+  }
+
+  downloadCardsCSV() {
+    const cards = this.getStoredCards();
+
+    if (cards.length === 0) {
+      alert('Brak zapisanych kart do pobrania.');
+      return;
+    }
+
+    const csvContent = this.generateCSV(cards);
+    this.downloadFile(csvContent, 'piraci_cards_statistics.csv', 'text/csv');
+  }
+
+  generateCSV(cards) {
+    const headers = [
+      'Data i czas',
+      'Poziom',
+      'Typ wydarzenia',
+      'Nazwa wydarzenia',
+      'Nagrody',
+      'Typ wroga',
+      'Rola wroga',
+      'Zdrowie wroga',
+      'Etapy walki',
+      'Współrzędne',
+      'Typ wyspy',
+      'Punkty nagrody'
+    ];
+
+    const rows = cards.map(card => {
+      let rewardPoints = '';
+
+      // Calculate reward points based on event type
+      if (card.eventType === 'Fight') {
+        rewardPoints = card.details.enemyHealth ? (2 * card.details.enemyHealth + 0.5 * 10 + 5).toFixed(1) : '';
+      } else if (card.eventType === 'Exploration') {
+        rewardPoints = (card.level * 4).toString();
+      } else if (card.eventType === 'Island') {
+        rewardPoints = '1'; // Standard island reward
+      }
+
+      return [
+        new Date(card.timestamp).toLocaleString('pl-PL'),
+        card.level,
+        this.translateEventType(card.eventType),
+        card.eventName,
+        card.rewards,
+        card.details.enemyType || '',
+        this.translateRole(card.details.enemyRole) || '',
+        card.details.enemyHealth || '',
+        card.details.enemyStages || '',
+        card.details.coordinates || '',
+        card.details.islandType || '',
+        rewardPoints
+      ];
+    });
+
+    const csv = [headers, ...rows]
+      .map(row => row.map(field => `"${field}"`).join(','))
+      .join('\n');
+
+    return csv;
+  }
+
+  translateEventType(eventType) {
+    const translations = {
+      'Fight': 'Walka',
+      'Island': 'Wyspa',
+      'Exploration': 'Eksploracja',
+      'Unknown': 'Nieznany'
+    };
+    return translations[eventType] || eventType;
+  }
+
+  translateRole(role) {
+    const translations = {
+      'warship': 'Okręt Wojenny',
+      'merchant': 'Statek Handlowy'
+    };
+    return translations[role] || role;
+  }
+
+  downloadFile(content, filename, contentType) {
+    const blob = new Blob([content], { type: contentType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+
+  clearStoredCards() {
+    localStorage.removeItem(this.storageKey);
+  }
+
+  clearStoredCardsWithConfirm() {
+    const count = this.getCardCount();
+    if (count === 0) {
+      alert('Brak zapisanych kart do wyczyszczenia.');
+      return;
+    }
+
+    const confirmed = confirm(`Czy na pewno chcesz usunąć wszystkie zapisane karty (${count} kart)? Ta operacja nie może być cofnięta.`);
+    if (confirmed) {
+      this.clearStoredCards();
+      this.updateButtonTexts();
+      alert('Wszystkie zapisane karty zostały usunięte.');
+    }
+  }
+
+  updateButtonTexts() {
+    const count = this.getCardCount();
+    const downloadButton = document.getElementById('download-cards-csv');
+    if (downloadButton) {
+      downloadButton.textContent = `📊 Pobierz statystyki kart (CSV) - ${count} kart`;
+    }
+  }
+
+  getCardCount() {
+    return this.getStoredCards().length;
+  }
+
+  showStatistics() {
+    const cards = this.getStoredCards();
+
+    if (cards.length === 0) {
+      alert('Brak zapisanych kart do analizy.');
+      return;
+    }
+
+    const stats = this.calculateStatistics(cards);
+    this.displayStatistics(stats);
+  }
+
+  calculateStatistics(cards) {
+    const stats = {
+      totalCards: cards.length,
+      byLevel: {},
+      byEventType: {},
+      byEnemyRole: {},
+      totalRewardPoints: 0,
+      averageRewardPoints: 0,
+      mostCommonRewards: {},
+      dateRange: {
+        first: null,
+        last: null
+      }
+    };
+
+    const rewardPoints = [];
+    const allRewards = [];
+
+    cards.forEach(card => {
+      // Level statistics
+      stats.byLevel[card.level] = (stats.byLevel[card.level] || 0) + 1;
+
+      // Event type statistics
+      stats.byEventType[card.eventType] = (stats.byEventType[card.eventType] || 0) + 1;
+
+      // Enemy role statistics
+      if (card.details.enemyRole) {
+        stats.byEnemyRole[card.details.enemyRole] = (stats.byEnemyRole[card.details.enemyRole] || 0) + 1;
+      }
+
+      // Reward points calculation
+      let points = 0;
+      if (card.eventType === 'Fight') {
+        points = card.details.enemyHealth ? (2 * card.details.enemyHealth + 0.5 * 10 + 5) : 0;
+      } else if (card.eventType === 'Exploration') {
+        points = card.level * 4;
+      } else if (card.eventType === 'Island') {
+        points = 1;
+      }
+      rewardPoints.push(points);
+
+      // Individual rewards
+      if (card.rewards) {
+        card.rewards.split(', ').forEach(reward => {
+          if (reward.trim()) {
+            allRewards.push(reward.trim());
+            stats.mostCommonRewards[reward.trim()] = (stats.mostCommonRewards[reward.trim()] || 0) + 1;
+          }
+        });
+      }
+
+      // Date range
+      const cardDate = new Date(card.timestamp);
+      if (!stats.dateRange.first || cardDate < stats.dateRange.first) {
+        stats.dateRange.first = cardDate;
+      }
+      if (!stats.dateRange.last || cardDate > stats.dateRange.last) {
+        stats.dateRange.last = cardDate;
+      }
+    });
+
+    stats.totalRewardPoints = rewardPoints.reduce((sum, points) => sum + points, 0);
+    stats.averageRewardPoints = stats.totalRewardPoints / cards.length;
+
+    return stats;
+  }
+
+  displayStatistics(stats) {
+    const eventTypeNames = {
+      'Fight': 'Walki',
+      'Island': 'Wyspy',
+      'Exploration': 'Eksploracje'
+    };
+
+    const roleNames = {
+      'warship': 'Okręty Wojenne',
+      'merchant': 'Statki Handlowe'
+    };
+
+    let statsHtml = `
+      <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin: 20px 0;">
+        <h3 style="color: #2c3e50; margin-bottom: 20px;">📊 Statystyki kart (${stats.totalCards} kart)</h3>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+          
+          <div style="background: #f8f9fa; padding: 15px; border-radius: 6px;">
+            <h4 style="color: #495057; margin-bottom: 10px;">🎯 Podział według poziomów</h4>
+            ${Object.entries(stats.byLevel).map(([level, count]) =>
+      `<div style="margin: 5px 0;">Poziom ${level}: ${count} kart</div>`
+    ).join('')}
+          </div>
+          
+          <div style="background: #f8f9fa; padding: 15px; border-radius: 6px;">
+            <h4 style="color: #495057; margin-bottom: 10px;">⚔️ Typy wydarzeń</h4>
+            ${Object.entries(stats.byEventType).map(([type, count]) =>
+      `<div style="margin: 5px 0;">${eventTypeNames[type] || type}: ${count} kart</div>`
+    ).join('')}
+          </div>
+          
+          ${Object.keys(stats.byEnemyRole).length > 0 ? `
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 6px;">
+              <h4 style="color: #495057; margin-bottom: 10px;">🚢 Role wrogów</h4>
+              ${Object.entries(stats.byEnemyRole).map(([role, count]) =>
+      `<div style="margin: 5px 0;">${roleNames[role] || role}: ${count} kart</div>`
+    ).join('')}
+            </div>
+          ` : ''}
+          
+          <div style="background: #f8f9fa; padding: 15px; border-radius: 6px;">
+            <h4 style="color: #495057; margin-bottom: 10px;">💰 Punkty nagród</h4>
+            <div style="margin: 5px 0;">Łącznie: ${stats.totalRewardPoints.toFixed(1)} punktów</div>
+            <div style="margin: 5px 0;">Średnio: ${stats.averageRewardPoints.toFixed(1)} punktów na kartę</div>
+          </div>
+          
+          <div style="background: #f8f9fa; padding: 15px; border-radius: 6px;">
+            <h4 style="color: #495057; margin-bottom: 10px;">📅 Zakres dat</h4>
+            <div style="margin: 5px 0;">Od: ${stats.dateRange.first.toLocaleDateString('pl-PL')}</div>
+            <div style="margin: 5px 0;">Do: ${stats.dateRange.last.toLocaleDateString('pl-PL')}</div>
+          </div>
+          
+        </div>
+        
+        ${Object.keys(stats.mostCommonRewards).length > 0 ? `
+          <div style="margin-top: 20px; background: #f8f9fa; padding: 15px; border-radius: 6px;">
+            <h4 style="color: #495057; margin-bottom: 10px;">🏆 Najczęstsze nagrody</h4>
+            ${Object.entries(stats.mostCommonRewards)
+          .sort(([, a], [, b]) => b - a)
+          .slice(0, 5)
+          .map(([reward, count]) =>
+            `<div style="margin: 5px 0;">${reward}: ${count} razy</div>`
+          ).join('')}
+          </div>
+        ` : ''}
+        
+      </div>
+    `;
+
+    // Create modal or replace content
+    const currentEvent = document.getElementById('current-event');
+    if (currentEvent) {
+      currentEvent.innerHTML = statsHtml;
+    }
+  }
+}
+
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', function () {
   const tabManager = new TabManager();
   const resourceChancesManager = new ResourceChancesManager(config);
   const eventManager = new EventManager();
   const enemyOverviewManager = new EnemyOverviewManager(config);
+
+  // Add card count display
+  const cardStorage = eventManager.cardStorage;
+  const updateCardCount = () => {
+    cardStorage.updateButtonTexts();
+  };
+
+  // Update count initially and after each card draw
+  updateCardCount();
+
+  // Override the original click handler to update count
+  document.querySelectorAll(".draw-card").forEach((button) => {
+    const originalClick = button.onclick;
+    button.addEventListener("click", () => {
+      setTimeout(updateCardCount, 100); // Update count after card is stored
+    });
+  });
 });
